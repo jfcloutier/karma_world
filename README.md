@@ -1,5 +1,9 @@
 # Karma World
 
+**UNDER CONSTRUCTION**
+
+## About
+
 A simulated environment for karma agents.
 
 Karma World
