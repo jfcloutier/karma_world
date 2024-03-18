@@ -20,10 +20,13 @@ defmodule KarmaWorldWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", KarmaWorldWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", KarmaWorldWeb do
+    pipe_through :api
+
+    post "/register_device", WorldController, :register_device
+    get "/sense/:device_id/:sense", WorldController, :sense
+    get "/actuate/:device_id/:action", WorldController, :actuate
+  end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:karma_world, :dev_routes) do
