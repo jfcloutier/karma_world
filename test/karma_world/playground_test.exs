@@ -1,7 +1,7 @@
 defmodule Playground.Playground.Test do
   use ExUnit.Case
 
-  alias Playground.{Playground, Space, Tile, Robot}
+  alias KarmaWorld.{Playground, Space, Tile, Robot}
   require Logger
 
   setup_all do
@@ -24,7 +24,7 @@ defmodule Playground.Playground.Test do
 
     test "Tile properties", %{tiles: tiles, tile_defaults: tile_defaults} do
       {:ok, tile} = Space.get_tile(tiles, row: 17, column: 9)
-      assert tile.beacon_orientation == "S"
+      assert tile.beacon_orientation == :south
       assert tile.obstacle_height == 10
       assert tile.ground_color == tile_defaults.color
       assert tile.ambient_light == tile_defaults.ambient * 10
@@ -40,7 +40,7 @@ defmodule Playground.Playground.Test do
 
   describe "Placing and moving robots" do
     test "Placing a robot", %{tiles: tiles} do
-      :ok =
+      {:ok, _robot} =
         GenServer.call(
           Playground,
           {:place_robot,
@@ -48,7 +48,7 @@ defmodule Playground.Playground.Test do
         )
 
       robots = Playground.robots()
-      andy = Playground.robot(:andy)
+      {:ok, andy} = Playground.robot(:andy)
       assert andy.name == :andy
       assert andy.x == 6.5
       assert andy.y == 5.5
@@ -57,10 +57,9 @@ defmodule Playground.Playground.Test do
     end
 
     test "Moving a robot" do
-      robot =
+      {:ok, robot} =
         Playground.place_robot(
           name: :andy,
-          node: node(),
           row: 5,
           column: 6,
           orientation: 90,
@@ -70,9 +69,9 @@ defmodule Playground.Playground.Test do
 
       assert robot.name == :andy
 
-      robot = Playground.move_robot(name: :andy, row: 0, column: 9)
+      {:ok, robot} = Playground.move_robot(name: :andy, row: 0, column: 9)
 
-      andy_robot = Playground.robot(:andy)
+      {:ok, andy_robot} = Playground.robot(:andy)
       assert andy_robot == robot
       assert {9.5, 0.5} == Robot.locate(robot)
     end

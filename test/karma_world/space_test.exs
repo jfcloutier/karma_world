@@ -17,7 +17,7 @@ defmodule KarmaWorld.Space.Test do
 
   describe "Spatial awareness" do
     test "Closest obstructed", %{tiles: tiles} do
-      robot =
+      {:ok, robot} =
         Playground.place_robot(
           name: :andy,
           row: 5,
@@ -29,7 +29,7 @@ defmodule KarmaWorld.Space.Test do
 
       assert {19, 5} == Space.closest_obstructed(tiles, robot, 90, Playground.robots())
 
-      robot = Playground.move_robot(name: :andy, row: 2, column: 9)
+      {:ok, robot} = Playground.move_robot(name: :andy, row: 2, column: 9)
 
       assert {9, 17} == Space.closest_obstructed(tiles, robot, 0, Playground.robots())
 
@@ -91,7 +91,7 @@ defmodule KarmaWorld.Space.Test do
     end
 
     test "Tile visibility", %{tiles: tiles} do
-      robot =
+      {:ok, robot} =
         Playground.place_robot(
           name: :andy,
           row: 6,
@@ -179,7 +179,7 @@ defmodule KarmaWorld.Space.Test do
 
   describe "Social distancing" do
     test "Closest visible robot", %{tiles: tiles} do
-      andy =
+      {:ok, andy} =
         Playground.place_robot(
           name: :andy,
           row: 6,
@@ -209,7 +209,13 @@ defmodule KarmaWorld.Space.Test do
 
       robots = Playground.robots()
       {:ok, closest_robot} = Space.closest_robot_visible_to(andy, tiles, robots)
+      assert closest_robot.name == :rodney
+
+      Playground.move_robot(name: :karl, row: 3, column: 1)
+      robots = Playground.robots()
+      {:ok, closest_robot} = Space.closest_robot_visible_to(andy, tiles, robots)
       assert closest_robot.name == :karl
+
 
       Playground.move_robot(name: :karl, row: 8, column: 15)
       robots = Playground.robots()
@@ -218,7 +224,7 @@ defmodule KarmaWorld.Space.Test do
     end
 
     test "distance to other robot" do
-      andy =
+      {:ok, andy} =
         Playground.place_robot(
           name: :andy,
           row: 6,
@@ -228,7 +234,7 @@ defmodule KarmaWorld.Space.Test do
           motor_data: []
         )
 
-      karl =
+      {:ok, karl} =
         Playground.place_robot(
           name: :karl,
           row: 1,
@@ -238,7 +244,7 @@ defmodule KarmaWorld.Space.Test do
           motor_data: []
         )
 
-      rodney =
+      {:ok, rodney} =
         Playground.place_robot(
           name: :rodney,
           row: 18,

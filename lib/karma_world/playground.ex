@@ -43,7 +43,7 @@ defmodule KarmaWorld.Playground do
   @doc """
   Place a robot in the playground
   """
-  @spec place_robot(keyword()) :: Robot.t()
+  @spec place_robot(keyword()) :: {:ok, Robot.t()} | {:error, atom()}
   def place_robot(
         name: name,
         row: row,
@@ -66,12 +66,12 @@ defmodule KarmaWorld.Playground do
 
   # Test support
   @doc false
-  @spec tiles() :: {:ok, [Tile.t()]}
+  @spec tiles() :: [Tile.t()]
   def tiles(), do: GenServer.call(__MODULE__, :tiles)
 
   # Test support
   @doc false
-  @spec robots() :: {:ok, [Robot.t()]}
+  @spec robots() :: [Robot.t()]
   def robots(), do: GenServer.call(__MODULE__, :robots)
 
   # Test support
@@ -82,12 +82,22 @@ defmodule KarmaWorld.Playground do
   # Test support
   @doc false
   @spec clear_robots() :: :ok
-  def clear_robots(), do: GenServer.cast(__MODULE__, :robots)
+  def clear_robots(), do: GenServer.cast(__MODULE__, :clear_robots)
+
+  # Test support
+  @doc false
+  @spec set_motor_control(keyword()) :: :ok
+  def set_motor_control(name: robot_name, connection: connection, control: control, value: value),
+    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, connection, control, value})
+
+  @spec actuate(keyword()) :: :ok
+  def actuate(name: robot_name, actuator_type: actuator_type, command: command),
+    do: GenServer.call(__MODULE__, {:actuate, robot_name, actuator_type, command})
 
   # Test support
   @doc false
   @spec move_robot(name: String.t(), row: non_neg_integer(), colum: non_neg_integer()) ::
-          Robot.t()
+          {:ok, Robot.t()} | {:error, atom()}
   def move_robot(name: robot_name, row: row, column: column),
     do: GenServer.call(__MODULE__, {:move_robot, name: robot_name, row: row, column: column})
 
@@ -142,7 +152,7 @@ defmodule KarmaWorld.Playground do
 
         KarmaWorld.broadcast("robot_placed", %{robot: robot, row: row, column: column})
         updated_robots = Map.put(robots, name, robot)
-        {:reply, :ok, %{state | robots: updated_robots}}
+        {:reply, {:ok, robot}, %{state | robots: updated_robots}}
 
       {:error, reason} ->
         Logger.warning("[KarmaWorld] Playground - Failed to place #{name}: #{reason}")
@@ -206,7 +216,7 @@ defmodule KarmaWorld.Playground do
 
   # Run a robot's motors
   def handle_call(
-        {:actuate, robot_name, actuator_type, command, params},
+        {:actuate, robot_name, actuator_type, command},
         _from,
         %{robots: robots, tiles: tiles} = state
       ) do
@@ -219,7 +229,7 @@ defmodule KarmaWorld.Playground do
         )
 
         actuated_robot =
-          Robot.actuate(robot, actuator_type, command, params, tiles, Map.values(robots))
+          Robot.actuate(robot, actuator_type, command, tiles, Map.values(robots))
 
         actuated_robot
       else
@@ -229,8 +239,7 @@ defmodule KarmaWorld.Playground do
     KarmaWorld.broadcast("robot_actuated", %{
       robot: updated_robot,
       actuator_type: actuator_type,
-      command: command,
-      params: params
+      command: command
     })
 
     {:reply, :ok, %{state | robots: Map.put(robots, robot.name, updated_robot)}}
@@ -239,11 +248,11 @@ defmodule KarmaWorld.Playground do
   ### TEST AND LIVE VIEW SUPPORT
 
   def handle_call(:tiles, _from, %{tiles: tiles} = state) do
-    {:reply, {:ok, tiles}, state}
+    {:reply, tiles, state}
   end
 
   def handle_call(:robots, _from, %{robots: robots} = state) do
-    {:reply, {:ok, Map.values(robots)}, state}
+    {:reply, Map.values(robots), state}
   end
 
   def handle_call({:robot, robot_name}, _from, %{robots: robots} = state) do

@@ -44,9 +44,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
         motor_data: motor_data
       )
 
-      before_location = Playground.robot(:andy) |> Robot.locate()
+      before_location = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      after_location = Playground.robot(:andy) |> Robot.locate()
+      after_location = robot(:andy) |> Robot.locate()
       assert before_location == after_location
     end
 
@@ -64,9 +64,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y > before_y
     end
@@ -85,9 +85,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert floor(after_y) == floor(before_y)
     end
@@ -106,9 +106,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
     end
@@ -127,9 +127,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
     end
@@ -148,9 +148,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y == before_y
     end
@@ -169,9 +169,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y > before_y
     end
@@ -190,9 +190,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
     end
@@ -211,9 +211,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
     end
@@ -232,9 +232,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y > before_y
     end
@@ -253,9 +253,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
     end
@@ -274,9 +274,9 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 10)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 10)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
     end
@@ -297,12 +297,12 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -0.1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 1)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
-      after_orientation = Playground.robot(:andy).orientation
+      after_orientation = robot(:andy).orientation
       assert after_orientation > 0
     end
 
@@ -320,12 +320,12 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 0.1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 1)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
-      after_orientation = Playground.robot(:andy).orientation
+      after_orientation = robot(:andy).orientation
       assert after_orientation < 0
     end
 
@@ -343,12 +343,12 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -0.1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 1)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
-      after_orientation = Playground.robot(:andy).orientation
+      after_orientation = robot(:andy).orientation
       assert after_orientation > 0
     end
 
@@ -366,12 +366,12 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: 0.1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 1)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
-      after_orientation = Playground.robot(:andy).orientation
+      after_orientation = robot(:andy).orientation
       assert after_orientation < 180
     end
 
@@ -389,13 +389,18 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       Playground.set_motor_control(name: :andy, connection: "outA", control: :time, value: 1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :speed, value: -0.1)
       Playground.set_motor_control(name: :andy, connection: "outB", control: :time, value: 1)
-      {before_x, before_y} = Playground.robot(:andy) |> Robot.locate()
+      {before_x, before_y} = robot(:andy) |> Robot.locate()
       Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
-      {after_x, after_y} = Playground.robot(:andy) |> Robot.locate()
+      {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
-      after_orientation = Playground.robot(:andy).orientation
+      after_orientation = robot(:andy).orientation
       assert after_orientation > -90
     end
+  end
+
+  defp robot(name) do
+    {:ok, robot} = Playground.robot(name)
+    robot
   end
 end
