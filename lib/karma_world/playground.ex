@@ -90,9 +90,17 @@ defmodule KarmaWorld.Playground do
   def set_motor_control(name: robot_name, connection: connection, control: control, value: value),
     do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, connection, control, value})
 
+  # Test support
+  @doc false
   @spec actuate(keyword()) :: :ok
   def actuate(name: robot_name, actuator_type: actuator_type, command: command),
     do: GenServer.call(__MODULE__, {:actuate, robot_name, actuator_type, command})
+
+  # Test support
+  @doc false
+  @spec read(keyword()) :: any()
+  def read(name: robot_name, sensor_id: sensor_id, sense: sense),
+    do: GenServer.call(__MODULE__, {:read, robot_name, sensor_id, sense})
 
   # Test support
   @doc false
@@ -107,7 +115,7 @@ defmodule KarmaWorld.Playground do
     do:
       GenServer.call(
         __MODULE__,
-        {:orient_robot, robot_name: robot_name, orientation: orientation}
+        {:orient_robot, name: robot_name, orientation: orientation}
       )
 
   @impl GenServer

@@ -8,13 +8,13 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
   setup_all do
     tiles = Playground.tiles()
-    default_color = Application.get_env(:andy_world, :default_color)
-    default_ambient = Application.get_env(:andy_world, :default_ambient)
+    default_color = Playground.defaults()[:default_color]
+    default_ambient = Playground.defaults()[:default_ambient]
 
     {:ok,
      %{
        tiles: tiles,
-       tile_defaults: %{color: Color.translate_color(default_color), ambient: default_ambient}
+       tile_defaults: %{color: Light.translate_color(default_color), ambient: default_ambient}
      }}
   end
 
@@ -32,7 +32,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         sensor_data: [
           %{
             connection: "in2",
-            type: :color,
+            type: :light,
             position: :front,
             height_cm: 2,
             aim: 0
@@ -53,7 +53,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         sensor_data: [
           %{
             connection: "in2",
-            type: :color,
+            type: :light,
             position: :front,
             height_cm: 2,
             aim: 0
@@ -62,7 +62,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         motor_data: []
       )
 
-      assert {:ok, :white} = Playground.read(name: :andy, sensor_id: "in2", sense: :color)
+      assert {:ok, :blue} = Playground.read(name: :andy, sensor_id: "in2", sense: :color)
     end
   end
 
@@ -76,7 +76,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         sensor_data: [
           %{
             connection: "in2",
-            type: :color,
+            type: :light,
             position: :front,
             height_cm: 2,
             aim: 0
@@ -87,7 +87,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
       sensed_ambient = default_ambient * 10
 
-      assert {:ok, sensed_ambient} =
+      assert {:ok, ^sensed_ambient} =
                Playground.read(name: :andy, sensor_id: "in2", sense: :ambient)
     end
 
@@ -100,7 +100,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         sensor_data: [
           %{
             connection: "in2",
-            type: :color,
+            type: :light,
             position: :front,
             height_cm: 2,
             aim: 0

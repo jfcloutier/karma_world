@@ -60,7 +60,7 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
     end
 
     test "Distance to other robot" do
-      Playground.place_robot(
+      {:ok, _} = Playground.place_robot(
         name: :andy,
         row: 10,
         column: 10,
@@ -77,10 +77,10 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
         motor_data: []
       )
 
-      Playground.place_robot(
+      {:ok, _} = Playground.place_robot(
         name: :karl,
         row: 2,
-        column: 2,
+        column: 1,
         orientation: 90,
         sensor_data: [
           %{
