@@ -15,12 +15,13 @@ defmodule KarmaWorldWeb.WorldController do
           "properties" => properties
         }
       ) do
-    result = KarmaWorld.register_device(%{
-      device_class: device_class,
-      device_type: device_type,
-      connection: connection,
-      properties: properties
-    })
+    result =
+      KarmaWorld.register_device(%{
+        device_class: device_class,
+        device_type: device_type,
+        connection: connection,
+        properties: properties
+      })
 
     render(conn, :registered_device, result: result)
   end
