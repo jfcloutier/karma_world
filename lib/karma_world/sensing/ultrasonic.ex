@@ -1,7 +1,7 @@
 defmodule KarmaWorld.Sensing.Ultrasonic do
   @moduledoc "Sensing ultrasonic"
 
-  alias KarmaWorld.{Space, Robot, Sensing.Sensor}
+  alias KarmaWorld.{Playground, Space, Robot, Sensing.Sensor}
 
   @behaviour Sensor
 
@@ -15,7 +15,7 @@ defmodule KarmaWorld.Sensing.Ultrasonic do
         tiles,
         robots
       ) do
-    tile_side_cm = Application.get_env(:karma_world, :playground)[:tile_side_cm]
+    tile_side_cm = Playground.defaults()[:tile_side_cm]
     sensor_orientation = Sensor.absolute_orientation(ultrasonic_sensor.aim, robot.orientation)
     {far_x, far_y} = Space.closest_obstructed(tiles, robot, sensor_orientation, robots)
     delta_y_sq = :math.pow(far_y - y, 2)

@@ -3,7 +3,7 @@ defmodule KarmaWorld.Robot do
   What is known about a robot
   """
 
-  alias KarmaWorld.{Space, Tile}
+  alias KarmaWorld.{Playground, Space, Tile}
   alias KarmaWorld.Actuating.Motor
   alias KarmaWorld.Sensing.Sensor
 
@@ -195,10 +195,10 @@ defmodule KarmaWorld.Robot do
       ticks = ceil(duration / tick_duration)
 
       degrees_per_rotation =
-        Application.get_env(:karma_world, :playground)[:degrees_per_motor_rotation]
+        Playground.defaults()[:degrees_per_motor_rotation]
 
       tiles_per_rotation =
-        Application.get_env(:karma_world, :playground)[:tiles_per_motor_rotation]
+        Playground.defaults()[:tiles_per_motor_rotation]
 
       position =
         Enum.reduce(

@@ -3,7 +3,7 @@ defmodule KarmaWorld.Space do
   Space sense maker
   """
 
-  alias KarmaWorld.{Tile, Robot, Sensing.Sensor}
+  alias KarmaWorld.{Playground, Tile, Robot, Sensing.Sensor}
   require Logger
 
   @type coordinates :: {float(), float()}
@@ -219,7 +219,7 @@ defmodule KarmaWorld.Space do
       |> :math.pow(2)
 
     distance = :math.sqrt(delta_y_squared + delta_x_squared)
-    distance_cm = distance * Application.get_env(:karma_world, :playground)[:tile_side_cm]
+    distance_cm = distance * Playground.defaults()[:tile_side_cm]
     distance_cm
   end
 
@@ -248,13 +248,12 @@ defmodule KarmaWorld.Space do
     row in row_range(tiles) and column in column_range(tiles)
   end
 
-  # TODO - For now assumes a single beacon channel
   @doc """
-  Find the tile on which a beacon sits
+  Find the tile on which a beacon on a given channel sits
   """
   @spec find_beacon_tile([Tile.t()], integer()) :: Tile.t() | nil
-  def find_beacon_tile(tiles, _channel) do
-    Enum.find(List.flatten(tiles), &(&1.beacon_orientation != nil))
+  def find_beacon_tile(tiles, channel) do
+    Enum.find(List.flatten(tiles), &(&1.beacon_channel == channel))
   end
 
   @doc """

@@ -7,13 +7,17 @@ defmodule KarmaWorld.Playground do
 
   use GenServer
 
-  alias KarmaWorld.{Space, Tile, Robot}
+  alias KarmaWorld.{Playground, Space, Tile, Robot}
   require Logger
 
   @type t :: %__MODULE__{tiles: [Tile.t()], robots: map()}
 
   defstruct tiles: [],
             robots: %{}
+
+  @doc "Get playground defaults"
+  @spec defaults() :: keyword()
+  def defaults(), do: Application.get_env(:karma_world, :playground)
 
   def child_spec(_) do
     %{
@@ -28,7 +32,7 @@ defmodule KarmaWorld.Playground do
   @spec start_link :: GenServer.on_start()
   def start_link() do
     Logger.info("Starting #{inspect(__MODULE__)}")
-    GenServer.start_link(__MODULE__, :ok, name: :playground)
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   @impl GenServer
@@ -36,12 +40,69 @@ defmodule KarmaWorld.Playground do
     {:ok, %__MODULE__{tiles: init_tiles()}}
   end
 
+  @doc """
+  Place a robot in the playground
+  """
+  @spec place_robot(keyword()) :: Robot.t()
+  def place_robot(
+        name: name,
+        row: row,
+        column: column,
+        orientation: orientation,
+        sensor_data: sensors_data,
+        motor_data: motors_data
+      ),
+      do:
+        GenServer.call(
+          __MODULE__,
+          {:place_robot,
+           name: name,
+           row: row,
+           column: column,
+           orientation: orientation,
+           sensor_data: sensors_data,
+           motor_data: motors_data}
+        )
+
+  # Test support
+  @doc false
+  @spec tiles() :: {:ok, [Tile.t()]}
+  def tiles(), do: GenServer.call(__MODULE__, :tiles)
+
+  # Test support
+  @doc false
+  @spec robots() :: {:ok, [Robot.t()]}
+  def robots(), do: GenServer.call(__MODULE__, :robots)
+
+  # Test support
+  @doc false
+  @spec robot(String.t()) :: {:ok, Robot.t()} | :error
+  def robot(robot_name), do: GenServer.call(__MODULE__, {:robot, robot_name})
+
+  # Test support
+  @doc false
+  @spec clear_robots() :: :ok
+  def clear_robots(), do: GenServer.cast(__MODULE__, :robots)
+
+  # Test support
+  @doc false
+  @spec move_robot(name: String.t(), row: non_neg_integer(), colum: non_neg_integer()) ::
+          Robot.t()
+  def move_robot(name: robot_name, row: row, column: column),
+    do: GenServer.call(__MODULE__, {:move_robot, name: robot_name, row: row, column: column})
+
+  # Test support
+  @doc false
+  def orient_robot(name: robot_name, orientation: orientation),
+    do:
+      GenServer.call(
+        __MODULE__,
+        {:orient_robot, robot_name: robot_name, orientation: orientation}
+      )
+
   @impl GenServer
-  # An event was broadcasted by a Karma agent-robot indicating a change in a robot's state
-  def handle_cast({:event, robot_name, event}, %{robots: robots} = state) do
-    robot = Map.fetch!(robots, robot_name)
-    KarmaWorld.broadcast("robot_event", %{robot: robot, event: event})
-    {:noreply, %{state | robots: Map.put(robots, robot_name, robot)}}
+  def handle_cast(:clear_robots, state) do
+    {:noreply, %{state | robots: %{}}}
   end
 
   @impl GenServer
@@ -189,10 +250,6 @@ defmodule KarmaWorld.Playground do
     {:reply, Map.fetch(robots, robot_name), state}
   end
 
-  def handle_call(:clear_robots, _from, state) do
-    {:reply, :ok, %{state | robots: %{}}}
-  end
-
   def handle_call(
         {:move_robot, name: robot_name, row: row, column: column},
         _from,
@@ -225,9 +282,9 @@ defmodule KarmaWorld.Playground do
   # Index = tile's cartesian coordinate
   # A list of rows
   defp init_tiles() do
-    tiles_data = Application.get_env(:karma_world, :playground)[:tiles]
-    default_ambient = Application.get_env(:karma_world, :playground)[:default_ambient]
-    default_color = Application.get_env(:karma_world, :playground)[:default_color]
+    tiles_data = Playground.defaults()[:tiles]
+    default_ambient = Playground.defaults()[:default_ambient]
+    default_color = Playground.defaults()[:default_color]
     row_count = Enum.count(tiles_data)
 
     Enum.reduce(

@@ -4,7 +4,7 @@ defmodule KarmaWorld.Sensing.Infrared do
   Assumes at most one beacon set to some channel
   """
 
-  alias KarmaWorld.{Space, Tile, Sensing.Sensor, Robot}
+  alias KarmaWorld.{Playground, Space, Tile, Sensing.Sensor, Robot}
   require Logger
 
   @behaviour Sensor
@@ -80,7 +80,7 @@ defmodule KarmaWorld.Sensing.Infrared do
             distance = :math.sqrt(delta_y_squared + delta_x_squared)
 
             distance_cm =
-              (distance * Application.get_env(:karma_world, :playground)[:tile_side_cm])
+              (distance * Playground.defaults()[:tile_side_cm])
               |> min(200)
 
             # Convert to percent of 200 cm

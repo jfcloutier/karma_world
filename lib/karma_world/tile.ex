@@ -21,6 +21,7 @@ defmodule KarmaWorld.Tile do
   defstruct row: nil,
             column: nil,
             obstacle_height: 0,
+            beacon_channel: nil,
             beacon_orientation: nil,
             ground_color: nil,
             ambient_light: nil
@@ -38,11 +39,14 @@ defmodule KarmaWorld.Tile do
         default_ambient: default_ambient,
         default_color: default_color
       ) do
+    {channel, orientation} = convert_beacon(beacon_s)
+
     %__MODULE__{
       row: row,
       column: column,
       obstacle_height: convert_height(height_s),
-      beacon_orientation: convert_beacon(beacon_s),
+      beacon_channel: channel,
+      beacon_orientation: orientation,
       ground_color: convert_color(color_s, default_color),
       ambient_light: convert_ambient(ambient_s, default_ambient)
     }
@@ -94,14 +98,18 @@ defmodule KarmaWorld.Tile do
     height * 10
   end
 
-  defp convert_beacon("_"), do: nil
+  defp convert_beacon("_"), do: {nil, nil}
 
-  defp convert_beacon(beacon_s) when beacon_s in ["N", "S", "E", "W"] do
+  defp convert_beacon(beacon_s) when beacon_s in ~w(N S E W n s e w) do
     case beacon_s do
-      "N" -> :north
-      "S" -> :south
-      "E" -> :east
-      "W" -> :west
+      "N" -> {1, :north}
+      "S" -> {1, :south}
+      "E" -> {1, :east}
+      "W" -> {1, :west}
+      "n" -> {2, :north}
+      "s" -> {2, :south}
+      "e" -> {2, :east}
+      "w" -> {2, :west}
     end
   end
 
