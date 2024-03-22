@@ -3,14 +3,13 @@ defmodule KarmaWorld.Sensing.Sensor do
   Data about a sensor
   """
 
-  alias __MODULE__
   alias KarmaWorld.Sensing.{Light, Infrared, Touch, Ultrasonic}
   alias KarmaWorld.{Robot, Space, Tile}
 
   @type position :: :left | :right | :top | :front | :back
   @type sensor_type :: :infrared | :light | :touch | :ultrasonic
   @type t :: %__MODULE__{
-          connection: String.t(),
+          id: String.t(),
           type: atom(),
           # where the sensor is positioned on the robot, one of :left, :right, :top, :front, :back
           position: position(),
@@ -20,7 +19,7 @@ defmodule KarmaWorld.Sensing.Sensor do
           aim: integer()
         }
 
-  defstruct connection: nil,
+  defstruct id: nil,
             type: nil,
             position: nil,
             height_cm: nil,
@@ -31,7 +30,7 @@ defmodule KarmaWorld.Sensing.Sensor do
   """
   @callback sense(
               robot :: %Robot{},
-              sensor :: %Sensor{},
+              sensor :: %__MODULE__{},
               sense :: atom | {atom, any},
               tile :: %Tile{},
               tiles :: [%Tile{}],
@@ -54,34 +53,22 @@ defmodule KarmaWorld.Sensing.Sensor do
   @doc """
   Make a sensor from data
   """
-  @spec from(%{
-          :aim => integer(),
-          :connection => String.t(),
-          :height_cm => non_neg_integer(),
-          :position => position(),
-          :type => sensor_type()
-        }) :: t()
+  @spec from(map()) :: t()
   def from(%{
-        connection: connection,
-        type: type,
+        device_id: id,
+        device_type: type,
         position: position,
         height_cm: height_cm,
         aim: aim
       }) do
-    %Sensor{
-      connection: connection,
-      type: type,
-      position: position,
-      height_cm: height_cm,
-      aim: aim
-    }
+    %__MODULE__{id: id, type: type, position: position, height_cm: height_cm, aim: aim}
   end
 
   @doc """
   Whether a sensor is of a given type
   """
   @spec has_type?(t(), sensor_type()) :: boolean()
-  def has_type?(%Sensor{type: type}, sensor_type), do: type == sensor_type
+  def has_type?(%{type: type}, sensor_type), do: type == sensor_type
 
   @doc """
   Get the absolute orientation of a sensor

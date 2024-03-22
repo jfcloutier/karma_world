@@ -45,6 +45,13 @@ config :karma_world,
   ]
 
 config :karma_world,
+  starting_places: [
+    # 0 is up/north, 90 is right/east, 180 is down/south, 270 is left/west
+    [row: 5, column: 8, orientation: 0],
+    [row: 15, column: 15, orientation: 180]
+  ]
+
+config :karma_world,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint

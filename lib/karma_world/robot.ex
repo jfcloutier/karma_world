@@ -33,32 +33,34 @@ defmodule KarmaWorld.Robot do
   Make a robot from data
   """
   @spec new(
-          name: String.t(),
+          name: any(),
           orientation: integer(),
-          sensors: map(),
-          motors: map(),
           row: non_neg_integer(),
           column: non_neg_integer()
         ) :: t()
   def new(
         name: name,
         orientation: orientation,
-        sensors: sensors_data,
-        motors: motors_data,
         row: row,
         column: column
       ) do
-    sensors = Enum.map(sensors_data, &{&1.connection, Sensor.from(&1)}) |> Enum.into(%{})
-    motors = Enum.map(motors_data, &{&1.connection, Motor.from(&1)}) |> Enum.into(%{})
-
     %__MODULE__{
       name: name,
       orientation: orientation,
-      sensors: sensors,
-      motors: motors,
       y: row * 1.0 + 0.5,
       x: column * 1.0 + 0.5
     }
+  end
+
+  @doc """
+  Add a sensor or motor to a robot
+  """
+  @spec add_device(t(), map()) :: t()
+  def add_device(robot, device_data) do
+    case device_data.device_class do
+      :sensor -> add_sensor(robot, device_data)
+      :motor -> add_motor(robot, device_data)
+    end
   end
 
   @doc """
@@ -93,15 +95,15 @@ defmodule KarmaWorld.Robot do
   Set a motor control of a robot
   """
   @spec set_motor_control(t(), String.t(), any(), any()) :: t()
-  def set_motor_control(%{motors: motors} = robot, connection, control, value) do
-    motor = Map.fetch!(motors, connection)
+  def set_motor_control(%{motors: motors} = robot, device_id, control, value) do
+    motor = Map.fetch!(motors, device_id)
 
     # Logger.debug(
     #   "Setting control #{inspect(control)} of motor #{motor.connection} to #{inspect(value)}"
     # )
 
     updated_motor = Motor.update_control(motor, control, value)
-    %{robot | motors: Map.put(motors, connection, updated_motor)}
+    %{robot | motors: Map.put(motors, device_id, updated_motor)}
   end
 
   @doc """
@@ -135,11 +137,11 @@ defmodule KarmaWorld.Robot do
   Read a robot's sensor
   """
   @spec sense(t(), String.t(), atom(), [Tile.t()], [t()]) :: any()
-  def sense(%{sensors: sensors} = robot, connection, raw_sense, tiles, robots) do
-    case Map.get(sensors, connection) do
+  def sense(%{sensors: sensors} = robot, device_id, raw_sense, tiles, robots) do
+    case Map.get(sensors, device_id) do
       nil ->
         Logger.warning(
-          "[KarmaWorld] Robot - Robot #{robot.name} has no sensor with id #{inspect(connection)}"
+          "[KarmaWorld] Robot - Robot #{robot.name} has no sensor with id #{inspect(device_id)}"
         )
 
         nil
@@ -161,6 +163,16 @@ defmodule KarmaWorld.Robot do
   end
 
   # Private
+
+  defp add_sensor(robot, device_data) do
+    sensor = Sensor.from(device_data)
+    %{robot | sensors: Map.put(robot.sensors, sensor.id, sensor)}
+  end
+
+  defp add_motor(robot, device_data) do
+    motor = Motor.from(device_data)
+    %{robot | motors: Map.put(robot.motors, motor.id, motor)}
+  end
 
   defp unpack_sense({sense, channel}) when is_atom(sense), do: {sense, channel}
 

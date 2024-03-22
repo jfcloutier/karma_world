@@ -43,8 +43,7 @@ defmodule Playground.Playground.Test do
       {:ok, _robot} =
         GenServer.call(
           Playground,
-          {:place_robot,
-           name: :andy, row: 5, column: 6, orientation: 90, sensor_data: [], motor_data: []}
+          {:place_robot, name: :andy, row: 5, column: 6, orientation: 90}
         )
 
       robots = Playground.robots()
@@ -62,9 +61,7 @@ defmodule Playground.Playground.Test do
           name: :andy,
           row: 5,
           column: 6,
-          orientation: 90,
-          sensor_data: [],
-          motor_data: []
+          orientation: 90
         )
 
       assert robot.name == :andy

@@ -7,23 +7,22 @@ defmodule KarmaWorld do
   if it comes from the database, an external API or others.
   """
 
+  alias KarmaWorld.Playground
+
   @type device_class :: :sensor | :motor
   @type device_type :: :motor | KarmaWorld.Sensing.Sensor.sensor_type()
 
-  @spec register_device(%{
-          :connection => String.t(),
-          :device_class => device_class(),
-          :device_type => device_type(),
-          :properties => map()
-        }) :: :ok
-  def register_device(%{
-        device_class: _device_class,
-        device_type: _device_type,
-        connection: _connection,
-        properties: _properties
-      }) do
-    # TODO
-    :ok
+  @spec register_device(any(), map()) :: :ok
+  def register_device(
+        robot_name,
+        %{
+          device_id: _device_id,
+          device_class: _device_class,
+          device_type: _device_type,
+          properties: _properties
+        } = device_data
+      ) do
+    :ok = Playground.add_device(robot_name, device_data)
   end
 
   @doc """

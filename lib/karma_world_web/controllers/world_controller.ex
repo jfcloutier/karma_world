@@ -5,21 +5,22 @@ defmodule KarmaWorldWeb.WorldController do
 
   use KarmaWorldWeb, :controller
 
-  # %{"connection" => "in1", "device_class" => "sensor", "device_type" => "touch", "properties" => %{"orientation" => "forward", "position" => "front"}}
+  # %{"robot_name" => "karl", "device_id" => "touch-in1", "device_class" => "sensor", "device_type" => "touch", "properties" => %{"orientation" => "forward", "position" => "front"}}
   def register_device(
         conn,
         %{
+          "body_name" => robot_name,
+          "device_id" => device_id,
           "device_class" => device_class,
           "device_type" => device_type,
-          "connection" => connection,
           "properties" => properties
         }
       ) do
     result =
-      KarmaWorld.register_device(%{
+      KarmaWorld.register_device(robot_name, %{
+        device_id: device_id,
         device_class: device_class,
         device_type: device_type,
-        connection: connection,
         properties: properties
       })
 

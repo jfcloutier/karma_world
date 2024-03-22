@@ -48,21 +48,21 @@ defmodule KarmaWorld.Playground do
         name: name,
         row: row,
         column: column,
-        orientation: orientation,
-        sensor_data: sensors_data,
-        motor_data: motors_data
+        orientation: orientation
       ),
       do:
         GenServer.call(
           __MODULE__,
-          {:place_robot,
-           name: name,
-           row: row,
-           column: column,
-           orientation: orientation,
-           sensor_data: sensors_data,
-           motor_data: motors_data}
+          {:place_robot, name: name, row: row, column: column, orientation: orientation}
         )
+
+  @doc """
+  Add a device to a robot
+  """
+  @spec add_device(any(), map()) :: :ok
+  def add_device(robot_name, device_data),
+    do:
+      GenServer.cast(__MODULE__, {:add_device, robot_name: robot_name, device_data: device_data})
 
   # Test support
   @doc false
@@ -87,8 +87,8 @@ defmodule KarmaWorld.Playground do
   # Test support
   @doc false
   @spec set_motor_control(keyword()) :: :ok
-  def set_motor_control(name: robot_name, connection: connection, control: control, value: value),
-    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, connection, control, value})
+  def set_motor_control(name: robot_name, device_id: device_id, control: control, value: value),
+    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, device_id, control, value})
 
   # Test support
   @doc false
@@ -123,16 +123,17 @@ defmodule KarmaWorld.Playground do
     {:noreply, %{state | robots: %{}}}
   end
 
+  def handle_cast({:add_device, robot_name: robot_name, device_data: device_data}, state) do
+    robot = Map.fetch!(state.robots, robot_name)
+
+    updated_robot = Robot.add_device(robot, device_data)
+    {:noreply, %{state | robots: Map.put(state.robots, robot_name, updated_robot)}}
+  end
+
   @impl GenServer
   # A robot is placed on the playground
   def handle_call(
-        {:place_robot,
-         name: name,
-         row: row,
-         column: column,
-         orientation: orientation,
-         sensor_data: sensors_data,
-         motor_data: motors_data},
+        {:place_robot, name: name, row: row, column: column, orientation: orientation},
         _from,
         %{robots: robots} = state
       ) do
@@ -148,8 +149,6 @@ defmodule KarmaWorld.Playground do
           Robot.new(
             name: name,
             orientation: orientation,
-            sensors: sensors_data,
-            motors: motors_data,
             row: row,
             column: column
           )

@@ -22,9 +22,7 @@ defmodule KarmaWorld.Space.Test do
           name: :andy,
           row: 5,
           column: 6,
-          orientation: 90,
-          sensor_data: [],
-          motor_data: []
+          orientation: 90
         )
 
       assert {19, 5} == Space.closest_obstructed(tiles, robot, 90, Playground.robots())
@@ -96,9 +94,7 @@ defmodule KarmaWorld.Space.Test do
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 90,
-          sensor_data: [],
-          motor_data: []
+          orientation: 90
         )
 
       {:ok, tile} = Space.get_tile(tiles, row: 6, column: 11)
@@ -184,27 +180,21 @@ defmodule KarmaWorld.Space.Test do
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 0,
-          sensor_data: [],
-          motor_data: []
+          orientation: 0
         )
 
       Playground.place_robot(
         name: :karl,
         row: 1,
         column: 1,
-        orientation: 0,
-        sensor_data: [],
-        motor_data: []
+        orientation: 0
       )
 
       Playground.place_robot(
         name: :rodney,
         row: 18,
         column: 18,
-        orientation: 0,
-        sensor_data: [],
-        motor_data: []
+        orientation: 0
       )
 
       robots = Playground.robots()
@@ -215,7 +205,6 @@ defmodule KarmaWorld.Space.Test do
       robots = Playground.robots()
       {:ok, closest_robot} = Space.closest_robot_visible_to(andy, tiles, robots)
       assert closest_robot.name == :karl
-
 
       Playground.move_robot(name: :karl, row: 8, column: 15)
       robots = Playground.robots()
@@ -229,9 +218,7 @@ defmodule KarmaWorld.Space.Test do
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 0,
-          sensor_data: [],
-          motor_data: []
+          orientation: 0
         )
 
       {:ok, karl} =
@@ -239,9 +226,7 @@ defmodule KarmaWorld.Space.Test do
           name: :karl,
           row: 1,
           column: 1,
-          orientation: 0,
-          sensor_data: [],
-          motor_data: []
+          orientation: 0
         )
 
       {:ok, rodney} =
@@ -249,9 +234,7 @@ defmodule KarmaWorld.Space.Test do
           name: :rodney,
           row: 18,
           column: 18,
-          orientation: 0,
-          sensor_data: [],
-          motor_data: []
+          orientation: 0
         )
 
       assert round(Space.distance_to_other_robot(andy, karl)) == 94

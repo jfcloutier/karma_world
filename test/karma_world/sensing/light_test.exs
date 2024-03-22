@@ -11,10 +11,20 @@ defmodule KarmaWorld.Sensing.Light.Test do
     default_color = Playground.defaults()[:default_color]
     default_ambient = Playground.defaults()[:default_ambient]
 
+    sensor_data = %{
+      device_id: "light-in2",
+      device_class: :sensor,
+      device_type: :light,
+      position: :front,
+      height_cm: 2,
+      aim: 0
+    }
+
     {:ok,
      %{
        tiles: tiles,
-       tile_defaults: %{color: Light.translate_color(default_color), ambient: default_ambient}
+       tile_defaults: %{color: Light.translate_color(default_color), ambient: default_ambient},
+       sensor_data: sensor_data
      }}
   end
 
@@ -22,94 +32,68 @@ defmodule KarmaWorld.Sensing.Light.Test do
     Playground.clear_robots()
   end
 
-  describe "Seeing color" do
-    test "seeing floor", %{tile_defaults: %{color: default_color}} do
-      Playground.place_robot(
-        name: :andy,
-        row: 10,
-        column: 10,
-        orientation: 0,
-        sensor_data: [
-          %{
-            connection: "in2",
-            type: :light,
-            position: :front,
-            height_cm: 2,
-            aim: 0
-          }
-        ],
-        motor_data: []
-      )
+  describe "Sensing light" do
+    test "seeing floor", %{tile_defaults: %{color: default_color}, sensor_data: sensor_data} do
+      {:ok, robot} =
+        Playground.place_robot(
+          name: :andy,
+          row: 10,
+          column: 10,
+          orientation: 0
+        )
 
-      assert {:ok, ^default_color} = Playground.read(name: :andy, sensor_id: "in2", sense: :color)
+      Playground.add_device(robot.name, sensor_data)
+
+      assert {:ok, ^default_color} =
+               Playground.read(name: :andy, sensor_id: "light-in2", sense: :color)
     end
 
-    test "seeing food" do
-      Playground.place_robot(
-        name: :andy,
-        row: 15,
-        column: 9,
-        orientation: 0,
-        sensor_data: [
-          %{
-            connection: "in2",
-            type: :light,
-            position: :front,
-            height_cm: 2,
-            aim: 0
-          }
-        ],
-        motor_data: []
-      )
+    test "seeing food", %{sensor_data: sensor_data} do
+      {:ok, robot} =
+        Playground.place_robot(
+          name: :andy,
+          row: 15,
+          column: 9,
+          orientation: 0
+        )
 
-      assert {:ok, :blue} = Playground.read(name: :andy, sensor_id: "in2", sense: :color)
+      Playground.add_device(robot.name, sensor_data)
+      assert {:ok, :blue} = Playground.read(name: :andy, sensor_id: "light-in2", sense: :color)
     end
   end
 
   describe "Seeing ambient light" do
-    test "See default ambient light", %{tile_defaults: %{ambient: default_ambient}} do
-      Playground.place_robot(
-        name: :andy,
-        row: 10,
-        column: 10,
-        orientation: 0,
-        sensor_data: [
-          %{
-            connection: "in2",
-            type: :light,
-            position: :front,
-            height_cm: 2,
-            aim: 0
-          }
-        ],
-        motor_data: []
-      )
+    test "See default ambient light", %{
+      tile_defaults: %{ambient: default_ambient},
+      sensor_data: sensor_data
+    } do
+      {:ok, robot} =
+        Playground.place_robot(
+          name: :andy,
+          row: 10,
+          column: 10,
+          orientation: 0
+        )
 
+      Playground.add_device(robot.name, sensor_data)
       sensed_ambient = default_ambient * 10
 
       assert {:ok, ^sensed_ambient} =
-               Playground.read(name: :andy, sensor_id: "in2", sense: :ambient)
+               Playground.read(name: :andy, sensor_id: "light-in2", sense: :ambient)
     end
 
-    test "See the darknesst" do
-      Playground.place_robot(
-        name: :andy,
-        row: 10,
-        column: 18,
-        orientation: 0,
-        sensor_data: [
-          %{
-            connection: "in2",
-            type: :light,
-            position: :front,
-            height_cm: 2,
-            aim: 0
-          }
-        ],
-        motor_data: []
-      )
+    test "See the darknesst", %{sensor_data: sensor_data} do
+      {:ok, robot} =
+        Playground.place_robot(
+          name: :andy,
+          row: 10,
+          column: 18,
+          orientation: 0
+        )
 
-      assert {:ok, 10} = Playground.read(name: :andy, sensor_id: "in2", sense: :ambient)
+      Playground.add_device(robot.name, sensor_data)
+
+      assert {:ok, 10} = Playground.read(name: :andy, sensor_id: "light-in2", sense: :ambient)
     end
   end
 end
