@@ -63,7 +63,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
     end
   end
 
-  test "Distance to beacon" do
+  test "Distance to beacon 1" do
     Playground.place_robot(
       name: :andy,
       row: 9,
@@ -100,5 +100,44 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
     # looking away from the beacon
     assert {:ok, :unknown} =
              Playground.read(name: :andy, sensor_id: "in3", sense: {:beacon_distance, 1})
+  end
+
+  test "Distance to beacon 2" do
+    Playground.place_robot(
+      name: :andy,
+      row: 9,
+      column: 9,
+      orientation: 180,
+      sensor_data: [
+        %{
+          connection: "in3",
+          type: :infrared,
+          position: :front,
+          height_cm: 10,
+          aim: 0
+        }
+      ],
+      motor_data: []
+    )
+
+    # 80 cms is 40% of 200cm
+    assert {:ok, 46} =
+             Playground.read(name: :andy, sensor_id: "in3", sense: {:beacon_distance, 2})
+
+    Playground.move_robot(name: :andy, row: 11, column: 1)
+    # hidden
+    assert {:ok, :unknown} =
+             Playground.read(name: :andy, sensor_id: "in3", sense: {:beacon_distance, 2})
+
+    Playground.move_robot(name: :andy, row: 5, column: 6)
+    Playground.orient_robot(name: :andy, orientation: 170)
+
+    assert {:ok, 21} =
+             Playground.read(name: :andy, sensor_id: "in3", sense: {:beacon_distance, 2})
+
+    Playground.orient_robot(name: :andy, orientation: 0)
+    # looking away from the beacon
+    assert {:ok, :unknown} =
+             Playground.read(name: :andy, sensor_id: "in3", sense: {:beacon_distance, 2})
   end
 end
