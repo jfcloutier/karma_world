@@ -4,12 +4,19 @@ defmodule KarmaWorldWeb.WorldJSON do
   """
 
   def registered_device(%{result: result}) do
-    %{registered: result}
+    %{registered_device: result}
+  end
+
+  def registered_body(%{result: result}) do
+    %{registered_body: result}
   end
 
   def sensed(%{sensor: id, sense: sense, value: value}),
     do: %{sensor: id, sense: sense, value: value}
 
-  def actuated(%{actuator: id, action: sense, value: value}),
-    do: %{actuator: id, action: sense, value: value}
+  def set_motor_control(motor: device_id, control: control, value: value, result: result),
+    do: %{motor: device_id, control: control, value: value, result: result}
+
+  def actuated(%{result: result}),
+    do: %{result: result}
 end

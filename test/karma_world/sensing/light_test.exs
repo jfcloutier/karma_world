@@ -35,11 +35,11 @@ defmodule KarmaWorld.Sensing.Light.Test do
   describe "Sensing light" do
     test "seeing floor", %{tile_defaults: %{color: default_color}, sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -50,11 +50,11 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
     test "seeing food", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 15,
           column: 9,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -68,11 +68,11 @@ defmodule KarmaWorld.Sensing.Light.Test do
       sensor_data: sensor_data
     } do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -84,11 +84,11 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
     test "See the darknesst", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 18,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)

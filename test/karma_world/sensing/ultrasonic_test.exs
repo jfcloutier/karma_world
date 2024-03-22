@@ -25,11 +25,11 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
   describe "Sensing distance" do
     test "Distance to edge", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180
+          orientation: 180}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -45,11 +45,11 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
 
     test "Distance to obstacle", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 7,
           column: 10,
-          orientation: 90
+          orientation: 90}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -60,21 +60,21 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
 
     test "Distance to other robot", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -135
+          orientation: -135}
         )
 
       Playground.add_device(robot.name, sensor_data)
 
       {:ok, _} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :karl,
           row: 2,
           column: 1,
-          orientation: 90
+          orientation: 90}
         )
 
       assert {:ok, 115} =

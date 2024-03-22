@@ -25,11 +25,11 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
   describe "Sensing beacon" do
     test "Heading to beacon", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 9,
           column: 9,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -91,11 +91,11 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
 
   test "Distance to beacon 1", %{sensor_data: sensor_data} do
     {:ok, robot} =
-      Playground.place_robot(
+      Playground.place_robot(%{
         name: :andy,
         row: 9,
         column: 9,
-        orientation: 0
+        orientation: 0}
       )
 
     Playground.add_device(robot.name, sensor_data)
@@ -123,11 +123,11 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
 
   test "Distance to beacon 2", %{sensor_data: sensor_data} do
     {:ok, robot} =
-      Playground.place_robot(
+      Playground.place_robot(%{
         name: :andy,
         row: 9,
         column: 9,
-        orientation: 180
+        orientation: 180}
       )
 
     Playground.add_device(robot.name, sensor_data)

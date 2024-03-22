@@ -116,21 +116,14 @@ defmodule KarmaWorld.Robot do
   @doc """
   Actuate a robot's motor
   """
-  @spec actuate(t(), atom(), atom(), [Tile.t()], [t()]) :: t()
+  @spec actuate(t(),  [Tile.t()], [t()]) :: t()
   def actuate(
         robot,
-        :motor,
-        :run_for,
         tiles,
         robots
       ) do
     run_motors(robot, tiles, robots -- [robot])
     |> reset_motors()
-  end
-
-  def actuate(robot, _actuator_type, _command, _tiles, _robots) do
-    # Do nothing for now if not locomotion
-    robot
   end
 
   @doc """

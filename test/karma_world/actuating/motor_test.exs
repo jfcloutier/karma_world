@@ -34,28 +34,28 @@ defmodule KarmaWorld.Actuating.Motor.Test do
   describe "Moving" do
     test "No motion", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 9,
           column: 9,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
       before_location = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       after_location = robot(:andy) |> Robot.locate()
       assert before_location == after_location
     end
 
     test "Move forward up", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -89,7 +89,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y > before_y
@@ -97,11 +97,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward up with obstacle", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 14,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -135,7 +135,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert floor(after_y) == floor(before_y)
@@ -143,11 +143,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward down", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180
+          orientation: 180}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -181,7 +181,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
@@ -189,11 +189,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward to the right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 90
+          orientation: 90}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -227,7 +227,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
@@ -235,11 +235,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward to the left", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90
+          orientation: -90}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -273,7 +273,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y == before_y
@@ -281,11 +281,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward up and to the right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 45
+          orientation: 45}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -319,7 +319,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y > before_y
@@ -327,11 +327,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move forward down and to the left", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -135
+          orientation: -135}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -365,7 +365,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
@@ -373,11 +373,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move backward down", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -411,7 +411,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
@@ -419,11 +419,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move backward up", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180
+          orientation: 180}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -457,7 +457,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y > before_y
@@ -465,11 +465,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move backward right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90
+          orientation: -90}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -503,7 +503,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
@@ -511,11 +511,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Move backward down and to the left", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 45
+          orientation: 45}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -549,7 +549,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       )
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
@@ -559,11 +559,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
   describe "Turning" do
     test "Pointing up, turning right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -586,7 +586,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -596,11 +596,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Pointing up, turning left", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0
+          orientation: 0}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -623,7 +623,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -633,11 +633,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Pointing right, turning right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 90
+          orientation: 90}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -660,7 +660,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -670,11 +670,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Pointing down, turning left", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180
+          orientation: 180}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -697,7 +697,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -707,11 +707,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
     test "Pointing left, turning right", %{motors_data: motors_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90
+          orientation: -90}
         )
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
@@ -734,7 +734,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy, actuator_type: :motor, command: :run_for)
+      Playground.actuate(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y

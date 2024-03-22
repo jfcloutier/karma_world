@@ -34,11 +34,11 @@ defmodule KarmaWorld.Sensing.Touch.Test do
   describe "Touching" do
     test "not touching front", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90
+          orientation: 90}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -49,11 +49,11 @@ defmodule KarmaWorld.Sensing.Touch.Test do
 
     test "not touching side", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90
+          orientation: 90}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -64,11 +64,11 @@ defmodule KarmaWorld.Sensing.Touch.Test do
 
     test "touching front", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 0
+          orientation: 0}
         )
 
       Playground.add_device(robot.name, sensor_data)
@@ -78,11 +78,11 @@ defmodule KarmaWorld.Sensing.Touch.Test do
 
     test "touching side", %{sensor_data: sensor_data} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90
+          orientation: 90}
         )
 
       Playground.add_device(robot.name, %{sensor_data | position: :left})

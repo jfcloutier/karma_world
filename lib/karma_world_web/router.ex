@@ -23,9 +23,11 @@ defmodule KarmaWorldWeb.Router do
   scope "/api", KarmaWorldWeb do
     pipe_through :api
 
-    post "/register_device", WorldController, :register_device
-    get "/sense/:device_id/:sense", WorldController, :sense
-    get "/actuate/:device_id/:action", WorldController, :actuate
+    put "/register_body/:body_name", WorldController, :register_body
+    post "/register_device/:body_name", WorldController, :register_device
+    get "/sense/body/:body_name/device/:device_id/sense/:sense", WorldController, :sense
+    put "/set_motor_control/body/:body_name/device/:device_id/control/:control/value/:value", WorldController, :set_motor_control
+    get "/actuate/body/:body_name/device/:device_id/action/:action", WorldController, :actuate
   end
 
   # Enable LiveDashboard in development

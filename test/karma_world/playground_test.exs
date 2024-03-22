@@ -57,12 +57,12 @@ defmodule Playground.Playground.Test do
 
     test "Moving a robot" do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 6,
           orientation: 90
-        )
+        })
 
       assert robot.name == :andy
 

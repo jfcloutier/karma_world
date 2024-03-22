@@ -18,11 +18,11 @@ defmodule KarmaWorld.Space.Test do
   describe "Spatial awareness" do
     test "Closest obstructed", %{tiles: tiles} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 5,
           column: 6,
-          orientation: 90
+          orientation: 90}
         )
 
       assert {19, 5} == Space.closest_obstructed(tiles, robot, 90, Playground.robots())
@@ -90,11 +90,11 @@ defmodule KarmaWorld.Space.Test do
 
     test "Tile visibility", %{tiles: tiles} do
       {:ok, robot} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 90
+          orientation: 90}
         )
 
       {:ok, tile} = Space.get_tile(tiles, row: 6, column: 11)
@@ -176,25 +176,25 @@ defmodule KarmaWorld.Space.Test do
   describe "Social distancing" do
     test "Closest visible robot", %{tiles: tiles} do
       {:ok, andy} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 0
+          orientation: 0}
         )
 
-      Playground.place_robot(
+      Playground.place_robot(%{
         name: :karl,
         row: 1,
         column: 1,
-        orientation: 0
+        orientation: 0}
       )
 
-      Playground.place_robot(
+      Playground.place_robot(%{
         name: :rodney,
         row: 18,
         column: 18,
-        orientation: 0
+        orientation: 0}
       )
 
       robots = Playground.robots()
@@ -214,27 +214,27 @@ defmodule KarmaWorld.Space.Test do
 
     test "distance to other robot" do
       {:ok, andy} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :andy,
           row: 6,
           column: 9,
-          orientation: 0
+          orientation: 0}
         )
 
       {:ok, karl} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :karl,
           row: 1,
           column: 1,
-          orientation: 0
+          orientation: 0}
         )
 
       {:ok, rodney} =
-        Playground.place_robot(
+        Playground.place_robot(%{
           name: :rodney,
           row: 18,
           column: 18,
-          orientation: 0
+          orientation: 0}
         )
 
       assert round(Space.distance_to_other_robot(andy, karl)) == 94

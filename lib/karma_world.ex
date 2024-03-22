@@ -9,9 +9,35 @@ defmodule KarmaWorld do
 
   alias KarmaWorld.Playground
 
+  require Logger
+
   @type device_class :: :sensor | :motor
   @type device_type :: :motor | KarmaWorld.Sensing.Sensor.sensor_type()
 
+  @doc """
+  Register a robot
+  """
+  @spec register_robot(any()) :: :ok | {:error, atom()}
+  def register_robot(robot_name) do
+    placements = Application.get_env(:karma_world, :starting_places)
+
+    Enum.find(placements, fn placement ->
+      named_placement = placement |> Enum.into(%{}) |> Map.put(:name, robot_name)
+
+      case Playground.place_robot(named_placement) do
+        {:ok, _robot} ->
+          :ok
+
+        {:error, reason} ->
+          Logger.warning("[KarmaWorld] Failed to place robot #{robot_name}: #{inspect(reason)}")
+          {:error, reason}
+      end
+    end)
+  end
+
+  @doc """
+  Register a robot's device
+  """
   @spec register_device(any(), map()) :: :ok
   def register_device(
         robot_name,
@@ -26,21 +52,32 @@ defmodule KarmaWorld do
   end
 
   @doc """
-  Read a sensor
+  Read a robot's sensor
   """
-  @spec sense(String.t(), String.t()) :: any()
-  def sense(_device_id, _sense) do
-    # TODO
-    42
+  @spec sense(String.t(), String.t(), String.t()) :: any()
+  def sense(robot_name, device_id, sense) do
+    Playground.read(name: robot_name, sensor_id: device_id, sense: sense)
   end
 
   @doc """
-  Actuate a motor
+  Set a motor control
   """
-  @spec actuate(String.t(), String.t()) :: :ok
-  def actuate(_device_id, _action) do
-    # TODO
-    :ok
+  @spec set_motor_control(any(), String.t(), atom(), number()) :: :ok
+  def set_motor_control(robot_name, device_id, control, value) do
+    Playground.set_motor_control(
+      name: robot_name,
+      device_id: device_id,
+      control: control,
+      value: value
+    )
+  end
+
+  @doc """
+  Actuate a robot's motor
+  """
+  @spec actuate(String.t()) :: :ok
+  def actuate(robot_name) do
+    Playground.actuate(name: robot_name)
   end
 
   @doc """

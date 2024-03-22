@@ -44,17 +44,12 @@ defmodule KarmaWorld.Playground do
   Place a robot in the playground
   """
   @spec place_robot(keyword()) :: {:ok, Robot.t()} | {:error, atom()}
-  def place_robot(
-        name: name,
-        row: row,
-        column: column,
-        orientation: orientation
-      ),
-      do:
-        GenServer.call(
-          __MODULE__,
-          {:place_robot, name: name, row: row, column: column, orientation: orientation}
-        )
+  def place_robot(%{name: name, row: row, column: column, orientation: orientation}),
+    do:
+      GenServer.call(
+        __MODULE__,
+        {:place_robot, name: name, row: row, column: column, orientation: orientation}
+      )
 
   @doc """
   Add a device to a robot
@@ -63,6 +58,27 @@ defmodule KarmaWorld.Playground do
   def add_device(robot_name, device_data),
     do:
       GenServer.cast(__MODULE__, {:add_device, robot_name: robot_name, device_data: device_data})
+
+  @doc """
+  Set a motor control
+  """
+  @spec set_motor_control(keyword()) :: :ok
+  def set_motor_control(name: robot_name, device_id: device_id, control: control, value: value),
+    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, device_id, control, value})
+
+  @doc """
+  Run the motors
+  """
+  @spec actuate(keyword()) :: :ok
+  def actuate(name: robot_name),
+    do: GenServer.call(__MODULE__, {:actuate, robot_name})
+
+  @doc """
+  Read a sensor
+  """
+  @spec read(keyword()) :: any()
+  def read(name: robot_name, sensor_id: sensor_id, sense: sense),
+    do: GenServer.call(__MODULE__, {:read, robot_name, sensor_id, sense})
 
   # Test support
   @doc false
@@ -83,24 +99,6 @@ defmodule KarmaWorld.Playground do
   @doc false
   @spec clear_robots() :: :ok
   def clear_robots(), do: GenServer.cast(__MODULE__, :clear_robots)
-
-  # Test support
-  @doc false
-  @spec set_motor_control(keyword()) :: :ok
-  def set_motor_control(name: robot_name, device_id: device_id, control: control, value: value),
-    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, device_id, control, value})
-
-  # Test support
-  @doc false
-  @spec actuate(keyword()) :: :ok
-  def actuate(name: robot_name, actuator_type: actuator_type, command: command),
-    do: GenServer.call(__MODULE__, {:actuate, robot_name, actuator_type, command})
-
-  # Test support
-  @doc false
-  @spec read(keyword()) :: any()
-  def read(name: robot_name, sensor_id: sensor_id, sense: sense),
-    do: GenServer.call(__MODULE__, {:read, robot_name, sensor_id, sense})
 
   # Test support
   @doc false
@@ -223,33 +221,25 @@ defmodule KarmaWorld.Playground do
 
   # Run a robot's motors
   def handle_call(
-        {:actuate, robot_name, actuator_type, command},
+        {:actuate, robot_name},
         _from,
         %{robots: robots, tiles: tiles} = state
       ) do
     robot = Map.fetch!(robots, robot_name)
 
     updated_robot =
-      if Robot.changed_by?(actuator_type, command) do
-        Logger.info(
-          "[KarmaWorld] Playground - Actuate #{robot.name}: #{inspect(command)} #{inspect(actuator_type)}"
-        )
+      Logger.info(
+        "[KarmaWorld] Playground - Actuate #{robot.name}"
+      )
 
-        actuated_robot =
-          Robot.actuate(robot, actuator_type, command, tiles, Map.values(robots))
-
-        actuated_robot
-      else
-        robot
-      end
+    actuated_robot =
+      Robot.actuate(robot, tiles, Map.values(robots))
 
     KarmaWorld.broadcast("robot_actuated", %{
-      robot: updated_robot,
-      actuator_type: actuator_type,
-      command: command
+      robot: updated_robot
     })
 
-    {:reply, :ok, %{state | robots: Map.put(robots, robot.name, updated_robot)}}
+    {:reply, :ok, %{state | robots: Map.put(robots, robot.name, actuated_robot)}}
   end
 
   ### TEST AND LIVE VIEW SUPPORT

@@ -6,6 +6,22 @@ defmodule KarmaWorldWeb.WorldController do
   use KarmaWorldWeb, :controller
 
   # %{"robot_name" => "karl", "device_id" => "touch-in1", "device_class" => "sensor", "device_type" => "touch", "properties" => %{"orientation" => "forward", "position" => "front"}}
+  def register_body(
+        conn,
+        %{"body_name" => robot_name}
+      ) do
+    case KarmaWorld.register_robot(robot_name) do
+      :ok ->
+        render(conn, :registered_body, result: "succeeded")
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:invalid)
+        |> put_view(json: KarmaWorld.ErrorJSON)
+        |> render(:"406")
+    end
+  end
+
   def register_device(
         conn,
         %{
@@ -27,13 +43,21 @@ defmodule KarmaWorldWeb.WorldController do
     render(conn, :registered_device, result: result)
   end
 
-  def sense(conn, %{"device_id" => device_id, "sense" => sense}) do
-    value = KarmaWorld.sense(device_id, sense)
+  def sense(conn, %{"body_name" => body_name, "device_id" => device_id, "sense" => sense}) do
+    value = KarmaWorld.sense(body_name, device_id, sense)
     render(conn, :sensed, sensor: device_id, sense: sense, value: value)
   end
 
-  def actuate(conn, %{"device_id" => device_id, "action" => action}) do
-    value = KarmaWorld.actuate(device_id, action)
-    render(conn, :actuated, actuator: device_id, action: action, value: value)
+  def set_motor_control(conn, %{"body_name" => body_name, "device_id" => device_id, "control" => control_s, "value" => value_s}) do
+    control = String.to_atom(control_s)
+    {value, ""} = Float.parse(value_s)
+    result = KarmaWorld.set_motor_control(body_name, device_id, control, value)
+    render(conn, :set_motor_control, motor: device_id, control: control, value: value, result: result)
+  end
+
+  @spec actuate(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def actuate(conn, %{"body_name" => body_name}) do
+    result = KarmaWorld.actuate(body_name)
+    render(conn, :actuated, result: result)
   end
 end
