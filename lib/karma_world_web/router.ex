@@ -26,7 +26,11 @@ defmodule KarmaWorldWeb.Router do
     put "/register_body/:body_name", WorldController, :register_body
     post "/register_device/:body_name", WorldController, :register_device
     get "/sense/body/:body_name/device/:device_id/sense/:sense", WorldController, :sense
-    put "/set_motor_control/body/:body_name/device/:device_id/control/:control/value/:value", WorldController, :set_motor_control
+
+    put "/set_motor_control/body/:body_name/device/:device_id/control/:control/value/:value",
+        WorldController,
+        :set_motor_control
+
     get "/actuate/body/:body_name/device/:device_id/action/:action", WorldController, :actuate
   end
 

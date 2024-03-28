@@ -116,7 +116,7 @@ defmodule KarmaWorld.Robot do
   @doc """
   Actuate a robot's motor
   """
-  @spec actuate(t(),  [Tile.t()], [t()]) :: t()
+  @spec actuate(t(), [Tile.t()], [t()]) :: t()
   def actuate(
         robot,
         tiles,

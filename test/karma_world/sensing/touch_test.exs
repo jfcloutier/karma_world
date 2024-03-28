@@ -38,8 +38,8 @@ defmodule KarmaWorld.Sensing.Touch.Test do
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -53,8 +53,8 @@ defmodule KarmaWorld.Sensing.Touch.Test do
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -68,8 +68,8 @@ defmodule KarmaWorld.Sensing.Touch.Test do
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -82,8 +82,8 @@ defmodule KarmaWorld.Sensing.Touch.Test do
           name: :andy,
           row: 5,
           column: 2,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       Playground.add_device(robot.name, %{sensor_data | position: :left})
 

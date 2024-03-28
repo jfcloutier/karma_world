@@ -29,8 +29,8 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180}
-        )
+          orientation: 180
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -49,8 +49,8 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
           name: :andy,
           row: 7,
           column: 10,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -64,8 +64,8 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -135}
-        )
+          orientation: -135
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -74,8 +74,8 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
           name: :karl,
           row: 2,
           column: 1,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       assert {:ok, 115} =
                Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)

@@ -38,8 +38,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 9,
           column: 9,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -55,8 +55,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -101,8 +101,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 5,
           column: 14,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -147,8 +147,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180}
-        )
+          orientation: 180
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -193,8 +193,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -239,8 +239,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90}
-        )
+          orientation: -90
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -285,8 +285,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 45}
-        )
+          orientation: 45
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -331,8 +331,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -135}
-        )
+          orientation: -135
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -377,8 +377,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -423,8 +423,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180}
-        )
+          orientation: 180
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -469,8 +469,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90}
-        )
+          orientation: -90
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -515,8 +515,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 45}
-        )
+          orientation: 45
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -563,8 +563,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -600,8 +600,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -637,8 +637,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 90}
-        )
+          orientation: 90
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -674,8 +674,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 180}
-        )
+          orientation: 180
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
@@ -711,8 +711,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: -90}
-        )
+          orientation: -90
+        })
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 

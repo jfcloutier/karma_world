@@ -19,6 +19,10 @@ defmodule KarmaWorld.Sensing.Sensor do
           aim: integer()
         }
 
+  @default_aim :forward
+  @default_position :front
+  @default_height_cm 10
+
   defstruct id: nil,
             type: nil,
             position: nil,
@@ -55,13 +59,40 @@ defmodule KarmaWorld.Sensing.Sensor do
   """
   @spec from(map()) :: t()
   def from(%{
-        device_id: id,
-        device_type: type,
-        position: position,
-        height_cm: height_cm,
-        aim: aim
+        device_id: device_id,
+        device_class: :sensor,
+        device_type: device_type,
+        properties: properties
       }) do
-    %__MODULE__{id: id, type: type, position: position, height_cm: height_cm, aim: aim}
+    position = Map.get(properties, :position, @default_position)
+    height_cm = Map.get(properties, :height_cm, @default_height_cm)
+    aim = Map.get(properties, :aim, @default_aim)
+
+    %__MODULE__{
+      id: device_id,
+      type: device_type,
+      position: position,
+      height_cm: height_cm,
+      aim: aim
+    }
+  end
+
+  # For testing
+  def from(%{
+        device_id: device_id,
+        device_class: :sensor,
+        device_type: device_type,
+        position: position,
+        aim: aim,
+        height_cm: height_cm
+      }) do
+    %__MODULE__{
+      id: device_id,
+      type: device_type,
+      position: position,
+      height_cm: height_cm,
+      aim: aim
+    }
   end
 
   @doc """

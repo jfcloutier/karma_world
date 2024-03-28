@@ -39,8 +39,8 @@ defmodule KarmaWorld.Sensing.Light.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -54,8 +54,8 @@ defmodule KarmaWorld.Sensing.Light.Test do
           name: :andy,
           row: 15,
           column: 9,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
       assert {:ok, :blue} = Playground.read(name: :andy, sensor_id: "light-in2", sense: :color)
@@ -72,8 +72,8 @@ defmodule KarmaWorld.Sensing.Light.Test do
           name: :andy,
           row: 10,
           column: 10,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
       sensed_ambient = default_ambient * 10
@@ -88,8 +88,8 @@ defmodule KarmaWorld.Sensing.Light.Test do
           name: :andy,
           row: 10,
           column: 18,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
 

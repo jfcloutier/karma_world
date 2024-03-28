@@ -17,22 +17,23 @@ defmodule KarmaWorld do
   @doc """
   Register a robot
   """
-  @spec register_robot(any()) :: :ok | {:error, atom()}
+  @spec register_robot(any()) :: :ok
   def register_robot(robot_name) do
     placements = Application.get_env(:karma_world, :starting_places)
 
-    Enum.find(placements, fn placement ->
-      named_placement = placement |> Enum.into(%{}) |> Map.put(:name, robot_name)
+    :ok =
+      Enum.find_value(placements, fn placement ->
+        named_placement = placement |> Enum.into(%{}) |> Map.put(:name, robot_name)
 
-      case Playground.place_robot(named_placement) do
-        {:ok, _robot} ->
-          :ok
+        case Playground.place_robot(named_placement) do
+          {:ok, _robot} ->
+            :ok
 
-        {:error, reason} ->
-          Logger.warning("[KarmaWorld] Failed to place robot #{robot_name}: #{inspect(reason)}")
-          {:error, reason}
-      end
-    end)
+          {:error, reason} ->
+            Logger.warning("[KarmaWorld] Failed to place robot #{robot_name}: #{inspect(reason)}")
+            nil
+        end
+      end)
   end
 
   @doc """
@@ -41,12 +42,7 @@ defmodule KarmaWorld do
   @spec register_device(any(), map()) :: :ok
   def register_device(
         robot_name,
-        %{
-          device_id: _device_id,
-          device_class: _device_class,
-          device_type: _device_type,
-          properties: _properties
-        } = device_data
+        device_data
       ) do
     :ok = Playground.add_device(robot_name, device_data)
   end

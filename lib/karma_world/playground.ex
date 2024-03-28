@@ -43,7 +43,7 @@ defmodule KarmaWorld.Playground do
   @doc """
   Place a robot in the playground
   """
-  @spec place_robot(keyword()) :: {:ok, Robot.t()} | {:error, atom()}
+  @spec place_robot(map()) :: {:ok, Robot.t()} | {:error, atom()}
   def place_robot(%{name: name, row: row, column: column, orientation: orientation}),
     do:
       GenServer.call(
@@ -228,9 +228,7 @@ defmodule KarmaWorld.Playground do
     robot = Map.fetch!(robots, robot_name)
 
     updated_robot =
-      Logger.info(
-        "[KarmaWorld] Playground - Actuate #{robot.name}"
-      )
+      Logger.info("[KarmaWorld] Playground - Actuate #{robot.name}")
 
     actuated_robot =
       Robot.actuate(robot, tiles, Map.values(robots))

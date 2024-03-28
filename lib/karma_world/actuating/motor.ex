@@ -11,6 +11,10 @@ defmodule KarmaWorld.Actuating.Motor do
           # e.g. speed_mode (:rps or :dps), speed (rotation per sec  or degrees per second) and time (run duration in secs)
           controls: map()
         }
+
+  @default_position :center
+  @default_polarity :normal
+
   defstruct id: nil,
             type: nil,
             direction: 0,
@@ -22,15 +26,36 @@ defmodule KarmaWorld.Actuating.Motor do
   """
   @spec from(map()) :: t()
   def from(%{
-        device_id: id,
-        device_type: type,
+        device_id: device_id,
+        device_class: :motor,
+        device_type: device_type,
+        properties: properties
+      }) do
+    position = Map.get(properties, :position, @default_position)
+    direction = direction_from_polarity(Map.get(properties, :polarity, @default_polarity))
+    controls = extract_controls(properties)
+
+    %__MODULE__{
+      id: device_id,
+      type: device_type,
+      direction: direction,
+      side: position,
+      controls: Map.merge(default_controls(), controls)
+    }
+  end
+
+  # For testing
+  def from(%{
+        device_id: device_id,
+        device_class: :motor,
+        device_type: device_type,
         direction: direction,
         side: side,
         controls: controls
       }) do
     %__MODULE__{
-      id: id,
-      type: type,
+      id: device_id,
+      type: device_type,
       direction: direction,
       side: side,
       controls: Map.merge(default_controls(), controls)
@@ -51,12 +76,24 @@ defmodule KarmaWorld.Actuating.Motor do
   end
 
   def run_duration(%{controls: controls}) do
-    Map.get(controls, :time, 0)
+    Map.get(controls, :time, 1)
   end
 
   def run_duration(_motor), do: 0
 
   ### Private
+
+  defp direction_from_polarity(polarity) do
+    case polarity do
+      :normal -> 1
+      :inversed -> -1
+      _other -> 0
+    end
+  end
+
+  defp extract_controls(%{rpm: rpm}) do
+    %{time: 1, speed_mode: :rps, speed: round(rpm / 60)}
+  end
 
   defp default_controls() do
     %{time: 0, speed_mode: :rps, speed: 0}

@@ -29,8 +29,8 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
           name: :andy,
           row: 9,
           column: 9,
-          orientation: 0}
-        )
+          orientation: 0
+        })
 
       Playground.add_device(robot.name, sensor_data)
 
@@ -95,8 +95,8 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
         name: :andy,
         row: 9,
         column: 9,
-        orientation: 0}
-      )
+        orientation: 0
+      })
 
     Playground.add_device(robot.name, sensor_data)
 
@@ -127,8 +127,8 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
         name: :andy,
         row: 9,
         column: 9,
-        orientation: 180}
-      )
+        orientation: 180
+      })
 
     Playground.add_device(robot.name, sensor_data)
 
