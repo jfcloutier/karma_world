@@ -50,7 +50,7 @@ defmodule KarmaWorld do
   @doc """
   Read a robot's sensor
   """
-  @spec sense(String.t(), String.t(), String.t()) :: any()
+  @spec sense(String.t(), String.t(), atom()) :: any()
   def sense(robot_name, device_id, sense) do
     Playground.read(name: robot_name, sensor_id: device_id, sense: sense)
   end

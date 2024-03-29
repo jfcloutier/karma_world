@@ -73,7 +73,7 @@ defmodule KarmaWorld.Sensing.Sensor do
       type: device_type,
       position: position,
       height_cm: height_cm,
-      aim: aim
+      aim: aim_to_integer(aim)
     }
   end
 
@@ -91,7 +91,7 @@ defmodule KarmaWorld.Sensing.Sensor do
       type: device_type,
       position: position,
       height_cm: height_cm,
-      aim: aim
+      aim: aim_to_integer(aim)
     }
   end
 
@@ -109,4 +109,16 @@ defmodule KarmaWorld.Sensing.Sensor do
     (robot_orientation + sensor_aim)
     |> Space.normalize_orientation()
   end
+
+  defp aim_to_integer(aim) when is_atom(aim) do
+    case aim do
+      :forward -> 0
+      :right -> 90
+      :backward -> 180
+      :left -> -90
+      :downward -> 0
+    end
+  end
+
+  defp aim_to_integer(aim) when is_integer(aim), do: aim
 end

@@ -6,7 +6,7 @@ defmodule KarmaWorld.Sensing.Touch do
   @behaviour Sensor
 
   @impl Sensor
-  def sense(robot, touch_sensor, :touch, _tile, tiles, robots) do
+  def sense(robot, touch_sensor, :contact, _tile, tiles, robots) do
     angle = Sensor.absolute_orientation(aim(touch_sensor.position), robot.orientation)
 
     case Space.tile_adjoining_at_angle(angle, Robot.locate(robot), tiles) do

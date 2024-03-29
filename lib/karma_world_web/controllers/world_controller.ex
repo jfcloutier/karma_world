@@ -39,8 +39,9 @@ defmodule KarmaWorldWeb.WorldController do
     render(conn, :registered_device, result: result)
   end
 
-  def sense(conn, %{"body_name" => body_name, "device_id" => device_id, "sense" => sense}) do
-    value = KarmaWorld.sense(body_name, device_id, sense)
+  def sense(conn, %{"body_name" => body_name, "device_id" => device_id, "sense" => sense_s}) do
+    sense = String.to_atom(sense_s)
+    {:ok, value} = KarmaWorld.sense(body_name, device_id, sense)
     render(conn, :sensed, sensor: device_id, sense: sense, value: value)
   end
 

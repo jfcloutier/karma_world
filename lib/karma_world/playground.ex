@@ -176,7 +176,7 @@ defmodule KarmaWorld.Playground do
       value = Robot.sense(robot, sensor_id, sense, tiles, Map.values(robots))
 
       Logger.info(
-        "[KarmaWorld] Playground - Read #{robot_name}: #{inspect(sensor_id)} #{inspect(sense)} = #{inspect(value)}"
+        "[KarmaWorld] Playground - Sensed #{inspect(sense)} of #{robot_name}'s #{inspect(sensor_id)} as #{inspect(value)}"
       )
 
       KarmaWorld.broadcast("robot_sensed", %{
