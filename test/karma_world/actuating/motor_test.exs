@@ -10,18 +10,14 @@ defmodule KarmaWorld.Actuating.Motor.Test do
          %{
            device_id: "motor-outA",
            device_class: :motor,
-           device_type: :motor,
-           direction: 1,
-           side: :left,
-           controls: %{speed_mode: :rps, speed: 0, time: 0}
+           device_type: :tacho_motor,
+           properties: %{rpm: 60, burst_secs: 0.1, position: :left, polarity: :normal}
          },
          %{
            device_id: "motor-outB",
            device_class: :motor,
            device_type: :motor,
-           direction: 1,
-           side: :right,
-           controls: %{speed_mode: :rps, speed: 0, time: 0}
+           properties: %{rpm: 60, burst_secs: 0.1, position: :right, polarity: :normal}
          }
        ]
      }}
@@ -44,7 +40,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
       before_location = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       after_location = robot(:andy) |> Robot.locate()
       assert before_location == after_location
     end
@@ -60,37 +56,21 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      assert robot(:andy).motors["motor-outA"].actions == [:spin]
+      assert robot(:andy).motors["motor-outB"].actions == [:spin]
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+
+      Playground.execute_actions(name: :andy)
+
+      assert Enum.empty?(robot(:andy).motors["motor-outA"].actions)
+      assert Enum.empty?(robot(:andy).motors["motor-outB"].actions)
+
       {after_x, after_y} = robot(:andy) |> Robot.locate()
+
       assert before_x == after_x
       assert after_y > before_y
     end
@@ -106,36 +86,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert floor(after_y) == floor(before_y)
@@ -152,36 +109,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
@@ -198,36 +132,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
@@ -244,36 +155,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y == before_y
@@ -290,36 +178,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y > before_y
@@ -336,36 +201,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
@@ -382,36 +224,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y < before_y
@@ -428,36 +247,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert before_x == after_x
       assert after_y > before_y
@@ -474,36 +270,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x > before_x
       assert after_y == before_y
@@ -520,36 +293,13 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :time,
-        value: 10
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -1
-      )
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :time,
-        value: 10
-      )
+      for _i <- 1..10 do
+        Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+        Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
+      end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x < before_x
       assert after_y < before_y
@@ -568,25 +318,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 0.1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
 
-      Playground.set_motor_control(name: :andy, device_id: "motor-outA", control: :time, value: 1)
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -0.1
-      )
-
-      Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -605,25 +341,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -0.1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
 
-      Playground.set_motor_control(name: :andy, device_id: "motor-outA", control: :time, value: 1)
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 0.1
-      )
-
-      Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -642,25 +364,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 0.1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
 
-      Playground.set_motor_control(name: :andy, device_id: "motor-outA", control: :time, value: 1)
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -0.1
-      )
-
-      Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -679,25 +387,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: -0.1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
 
-      Playground.set_motor_control(name: :andy, device_id: "motor-outA", control: :time, value: 1)
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: 0.1
-      )
-
-      Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y
@@ -716,25 +410,11 @@ defmodule KarmaWorld.Actuating.Motor.Test do
 
       for device_data <- motors_data, do: Playground.add_device(robot.name, device_data)
 
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outA",
-        control: :speed,
-        value: 0.1
-      )
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
 
-      Playground.set_motor_control(name: :andy, device_id: "motor-outA", control: :time, value: 1)
-
-      Playground.set_motor_control(
-        name: :andy,
-        device_id: "motor-outB",
-        control: :speed,
-        value: -0.1
-      )
-
-      Playground.set_motor_control(name: :andy, device_id: "motor-outB", control: :time, value: 1)
       {before_x, before_y} = robot(:andy) |> Robot.locate()
-      Playground.actuate(name: :andy)
+      Playground.execute_actions(name: :andy)
       {after_x, after_y} = robot(:andy) |> Robot.locate()
       assert after_x == before_x
       assert after_y == before_y

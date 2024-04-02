@@ -35,12 +35,12 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, 100} =
-               Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
+               Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
 
       Playground.move_robot(name: :andy, row: 0, column: 0)
 
       assert {:ok, 2} =
-               Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
+               Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
     end
 
     test "Distance to obstacle", %{sensor_data: sensor_data} do
@@ -55,7 +55,7 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, 30} =
-               Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
+               Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
     end
 
     test "Distance to other robot", %{sensor_data: sensor_data} do
@@ -78,12 +78,12 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
         })
 
       assert {:ok, 115} =
-               Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
+               Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
 
       Playground.move_robot(name: :karl, row: 9, column: 9)
 
       assert {:ok, 16} =
-               Playground.read(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
+               Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
     end
   end
 end

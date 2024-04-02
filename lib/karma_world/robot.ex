@@ -92,21 +92,6 @@ defmodule KarmaWorld.Robot do
   end
 
   @doc """
-  Set a motor control of a robot
-  """
-  @spec set_motor_control(t(), String.t(), any(), any()) :: t()
-  def set_motor_control(%{motors: motors} = robot, device_id, control, value) do
-    motor = Map.fetch!(motors, device_id)
-
-    # Logger.debug(
-    #   "Setting control #{inspect(control)} of motor #{motor.connection} to #{inspect(value)}"
-    # )
-
-    updated_motor = Motor.update_control(motor, control, value)
-    %{robot | motors: Map.put(motors, device_id, updated_motor)}
-  end
-
-  @doc """
   Whether a robot's state is changed by an actuation
   """
   @spec changed_by?(atom(), atom()) :: boolean()
@@ -116,22 +101,37 @@ defmodule KarmaWorld.Robot do
   @doc """
   Actuate a robot's motor
   """
-  @spec actuate(t(), [Tile.t()], [t()]) :: t()
+  @spec actuate(t(), String.t(), atom(), [Tile.t()], [t()]) :: t()
   def actuate(
         robot,
-        tiles,
-        robots
+        motor_id,
+        action,
+        _tiles,
+        _robots
       ) do
-    run_motors(robot, tiles, robots -- [robot])
-    |> reset_motors()
+    motor = Map.get(robot.motors, motor_id)
+    updated_motor = Motor.actuate(motor, action)
+    %{robot | motors: Map.put(robot.motors, motor_id, updated_motor)}
   end
+
+  def execute_actions(robot, tiles, other_robots) do
+    updated_robot =
+      robot
+      |> aggregate_actions()
+      |> run_motors(tiles, other_robots)
+
+    updated_robot
+  end
+
+  # run_motors(robot, tiles, robots -- [robot])
+  # |> reset_motors()
 
   @doc """
   Read a robot's sensor
   """
   @spec sense(t(), String.t(), atom(), [Tile.t()], [t()]) :: any()
-  def sense(%{sensors: sensors} = robot, device_id, raw_sense, tiles, robots) do
-    case Map.get(sensors, device_id) do
+  def sense(%{sensors: sensors, motors: motors} = robot, device_id, raw_sense, tiles, other_robots) do
+    case Map.get(sensors, device_id) || Map.get(motors, device_id) do
       nil ->
         Logger.warning(
           "[KarmaWorld] Robot - Robot #{robot.name} has no sensor with id #{inspect(device_id)}"
@@ -150,7 +150,7 @@ defmodule KarmaWorld.Robot do
           sense,
           tile,
           tiles,
-          robots
+          other_robots
         ])
     end
   end
@@ -176,13 +176,26 @@ defmodule KarmaWorld.Robot do
     end
   end
 
+  defp aggregate_actions(robot) do
+    updated_motors =
+      Enum.map(robot.motors, fn {motor_id, motor} ->
+        {motor_id, Motor.aggregate_actions(motor)}
+      end)
+      |> Enum.into(%{})
+
+    %{robot | motors: updated_motors}
+  end
+
   defp run_motors(
          robot,
          tiles,
          other_robots
        ) do
     motors = Map.values(robot.motors)
-    durations = Enum.map(motors, &Motor.run_duration(&1)) |> Enum.filter(&(&1 != 0))
+
+    durations =
+      Enum.map(motors, & &1.duration)
+      |> Enum.filter(&(&1 != 0))
 
     tick_duration =
       case durations do
@@ -210,7 +223,7 @@ defmodule KarmaWorld.Robot do
           %{orientation: robot.orientation, x: robot.x, y: robot.y},
           fn tick, acc ->
             secs_elapsed = tick * tick_duration
-            running_motors = Enum.reject(motors, &(Motor.run_duration(&1) < secs_elapsed))
+            running_motors = Enum.reject(motors, &(&1.duration < secs_elapsed))
             left_motors = Enum.filter(running_motors, &(&1.side == :left))
             right_motors = Enum.filter(running_motors, &(&1.side == :right))
 
@@ -234,9 +247,11 @@ defmodule KarmaWorld.Robot do
       )
 
       %{robot | orientation: new_orientation, x: position.x, y: position.y}
+      |> motors_run_completed()
     end
   end
 
+  # TODO - update position status and state status of motors
   defp activate_motors(
          left_motors,
          right_motors,
@@ -277,14 +292,6 @@ defmodule KarmaWorld.Robot do
     %{orientation: angle, x: new_x, y: new_y}
   end
 
-  defp reset_motors(%{motors: motors} = robot) do
-    updated_motors =
-      Enum.map(motors, fn {port, motor} -> {port, Motor.reset_controls(motor)} end)
-      |> Enum.into(%{})
-
-    %{robot | motors: updated_motors}
-  end
-
   defp new_orientation(
          orientation,
          left_forward_rotations,
@@ -320,7 +327,7 @@ defmodule KarmaWorld.Robot do
 
       {:ok, tile} ->
         if Space.occupied?(tile, other_robots) do
-          Logger.info(
+          IO.puts(
             "[KarmaWorld] Robot - Can't move to new position #{inspect({new_x, new_y})}. Tile is occupied"
           )
 
@@ -329,6 +336,15 @@ defmodule KarmaWorld.Robot do
           {new_x, new_y}
         end
     end
+  end
+
+  defp motors_run_completed(robot) do
+    updated_motors =
+      robot.motors
+      |> Enum.map(fn {motor_id, motor} -> {motor_id, Motor.run_completed(motor)} end)
+      |> Enum.into(%{})
+
+    %{robot | motors: updated_motors}
   end
 
   defp max(list, default \\ 0)

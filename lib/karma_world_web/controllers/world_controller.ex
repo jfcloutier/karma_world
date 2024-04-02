@@ -40,33 +40,37 @@ defmodule KarmaWorldWeb.WorldController do
   end
 
   def sense(conn, %{"body_name" => body_name, "device_id" => device_id, "sense" => sense_s}) do
-    sense = String.to_atom(sense_s)
+    sense = sense_from_string(sense_s)
     {:ok, value} = KarmaWorld.sense(body_name, device_id, sense)
-    render(conn, :sensed, sensor: device_id, sense: sense, value: value)
-  end
-
-  def set_motor_control(conn, %{
-        "body_name" => body_name,
-        "device_id" => device_id,
-        "control" => control_s,
-        "value" => value_s
-      }) do
-    control = String.to_atom(control_s)
-    {value, ""} = Float.parse(value_s)
-    result = KarmaWorld.set_motor_control(body_name, device_id, control, value)
-
-    render(conn, :set_motor_control,
-      motor: device_id,
-      control: control,
-      value: value,
-      result: result
-    )
+    render(conn, :sensed, sensor: device_id, sense: sense_s, value: value)
   end
 
   @spec actuate(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def actuate(conn, %{"body_name" => body_name}) do
-    result = KarmaWorld.actuate(body_name)
+  def actuate(conn, %{"body_name" => body_name, "device_id" => device_id, "action" => action_s}) do
+    action = String.to_atom(action_s)
+    result = KarmaWorld.actuate(body_name, device_id, action)
     render(conn, :actuated, result: result)
+  end
+
+  @spec execute_actions(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def execute_actions(conn, %{"body_name" => body_name}) do
+    result = KarmaWorld.execute_actions(body_name)
+    render(conn, :executed, result: result)
+  end
+
+  defp sense_from_string(sense_s) do
+    case String.split(sense_s, "_") do
+      ["heading", channel_s] ->
+        {channel, ""} = Integer.parse(channel_s)
+        {:beacon_heading, channel}
+
+      ["distance", channel_s] ->
+        {channel, ""} = Integer.parse(channel_s)
+        {:beacon_distance, channel}
+
+      ["proximity"] ->
+        :proximity
+    end
   end
 
   defp atomize(data) when is_map(data) do

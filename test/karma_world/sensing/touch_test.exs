@@ -44,7 +44,7 @@ defmodule KarmaWorld.Sensing.Touch.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, :released} =
-               Playground.read(name: :andy, sensor_id: "touch-in1", sense: :contact)
+               Playground.sense(name: :andy, sensor_id: "touch-in1", sense: :contact)
     end
 
     test "not touching side", %{sensor_data: sensor_data} do
@@ -59,7 +59,7 @@ defmodule KarmaWorld.Sensing.Touch.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, :released} =
-               Playground.read(name: :andy, sensor_id: "touch-in1", sense: :contact)
+               Playground.sense(name: :andy, sensor_id: "touch-in1", sense: :contact)
     end
 
     test "touching front", %{sensor_data: sensor_data} do
@@ -73,7 +73,7 @@ defmodule KarmaWorld.Sensing.Touch.Test do
 
       Playground.add_device(robot.name, sensor_data)
 
-      assert {:ok, :pressed} = Playground.read(name: :andy, sensor_id: "touch-in1", sense: :contact)
+      assert {:ok, :pressed} = Playground.sense(name: :andy, sensor_id: "touch-in1", sense: :contact)
     end
 
     test "touching side", %{sensor_data: sensor_data} do
@@ -87,7 +87,7 @@ defmodule KarmaWorld.Sensing.Touch.Test do
 
       Playground.add_device(robot.name, %{sensor_data | position: :left})
 
-      assert {:ok, :pressed} = Playground.read(name: :andy, sensor_id: "touch-in1", sense: :contact)
+      assert {:ok, :pressed} = Playground.sense(name: :andy, sensor_id: "touch-in1", sense: :contact)
     end
   end
 end

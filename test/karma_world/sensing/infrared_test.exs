@@ -35,7 +35,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, 0} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
@@ -44,7 +44,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.orient_robot(name: :andy, orientation: 90)
 
       assert {:ok, -25} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
@@ -53,7 +53,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.orient_robot(name: :andy, orientation: -90)
 
       assert {:ok, 25} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
@@ -63,7 +63,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.move_robot(name: :andy, row: 0, column: 0)
 
       assert {:ok, 8} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
@@ -72,7 +72,7 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.move_robot(name: :andy, row: 0, column: 19)
       # hidden by obstacle
       assert {:ok, 0} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
@@ -81,75 +81,122 @@ defmodule KarmaWorld.Sensing.Infrared.Test do
       Playground.move_robot(name: :andy, row: 9, column: 19)
 
       assert {:ok, -14} =
-               Playground.read(
+               Playground.sense(
                  name: :andy,
                  sensor_id: "infrared-in3",
                  sense: {:beacon_heading, 1}
                )
     end
+
+    test "Distance to beacon 1", %{sensor_data: sensor_data} do
+      {:ok, robot} =
+        Playground.place_robot(%{
+          name: :andy,
+          row: 9,
+          column: 9,
+          orientation: 0
+        })
+
+      Playground.add_device(robot.name, sensor_data)
+
+      # 80 cms is 40% of 200cm
+      assert {:ok, 40} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 1}
+               )
+
+      Playground.move_robot(name: :andy, row: 4, column: 16)
+      # hidden
+      assert {:ok, :unknown} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 1}
+               )
+
+      Playground.move_robot(name: :andy, row: 10, column: 16)
+      Playground.orient_robot(name: :andy, orientation: 45)
+
+      assert {:ok, 49} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 1}
+               )
+
+      Playground.orient_robot(name: :andy, orientation: 180)
+      # looking away from the beacon
+      assert {:ok, :unknown} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 1}
+               )
+    end
+
+    test "Distance to beacon 2", %{sensor_data: sensor_data} do
+      {:ok, robot} =
+        Playground.place_robot(%{
+          name: :andy,
+          row: 9,
+          column: 9,
+          orientation: 180
+        })
+
+      Playground.add_device(robot.name, sensor_data)
+
+      # 80 cms is 40% of 200cm
+      assert {:ok, 46} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 2}
+               )
+
+      Playground.move_robot(name: :andy, row: 11, column: 1)
+      # hidden
+      assert {:ok, :unknown} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 2}
+               )
+
+      Playground.move_robot(name: :andy, row: 5, column: 6)
+      Playground.orient_robot(name: :andy, orientation: 170)
+
+      assert {:ok, 21} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 2}
+               )
+
+      Playground.orient_robot(name: :andy, orientation: 0)
+      # looking away from the beacon
+      assert {:ok, :unknown} =
+               Playground.sense(
+                 name: :andy,
+                 sensor_id: "infrared-in3",
+                 sense: {:beacon_distance, 2}
+               )
+    end
   end
 
-  test "Distance to beacon 1", %{sensor_data: sensor_data} do
+  test "Proximity to IR-reflecting object", %{sensor_data: sensor_data} do
     {:ok, robot} =
       Playground.place_robot(%{
         name: :andy,
-        row: 9,
-        column: 9,
-        orientation: 0
+        row: 7,
+        column: 10,
+        orientation: 90
       })
 
     Playground.add_device(robot.name, sensor_data)
 
-    # 80 cms is 40% of 200cm
-    assert {:ok, 40} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 1})
-
-    Playground.move_robot(name: :andy, row: 4, column: 16)
-    # hidden
-    assert {:ok, :unknown} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 1})
-
-    Playground.move_robot(name: :andy, row: 10, column: 16)
-    Playground.orient_robot(name: :andy, orientation: 45)
-
-    assert {:ok, 49} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 1})
-
-    Playground.orient_robot(name: :andy, orientation: 180)
-    # looking away from the beacon
-    assert {:ok, :unknown} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 1})
-  end
-
-  test "Distance to beacon 2", %{sensor_data: sensor_data} do
-    {:ok, robot} =
-      Playground.place_robot(%{
-        name: :andy,
-        row: 9,
-        column: 9,
-        orientation: 180
-      })
-
-    Playground.add_device(robot.name, sensor_data)
-
-    # 80 cms is 40% of 200cm
-    assert {:ok, 46} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 2})
-
-    Playground.move_robot(name: :andy, row: 11, column: 1)
-    # hidden
-    assert {:ok, :unknown} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 2})
-
-    Playground.move_robot(name: :andy, row: 5, column: 6)
-    Playground.orient_robot(name: :andy, orientation: 170)
-
-    assert {:ok, 21} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 2})
-
-    Playground.orient_robot(name: :andy, orientation: 0)
-    # looking away from the beacon
-    assert {:ok, :unknown} =
-             Playground.read(name: :andy, sensor_id: "infrared-in3", sense: {:beacon_distance, 2})
+    assert {:ok, 30} =
+             Playground.sense(name: :andy, sensor_id: "infrared-in3", sense: :proximity)
   end
 end

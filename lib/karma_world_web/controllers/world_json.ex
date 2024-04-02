@@ -14,9 +14,9 @@ defmodule KarmaWorldWeb.WorldJSON do
   def sensed(%{sensor: id, sense: sense, value: value}),
     do: %{sensor: id, sense: sense, value: value}
 
-  def set_motor_control(motor: device_id, control: control, value: value, result: result),
-    do: %{motor: device_id, control: control, value: value, result: result}
-
   def actuated(%{result: result}),
+    do: %{result: result}
+
+  def executed(%{result: result}),
     do: %{result: result}
 end

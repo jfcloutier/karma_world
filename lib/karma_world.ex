@@ -52,28 +52,19 @@ defmodule KarmaWorld do
   """
   @spec sense(String.t(), String.t(), atom()) :: any()
   def sense(robot_name, device_id, sense) do
-    Playground.read(name: robot_name, sensor_id: device_id, sense: sense)
-  end
-
-  @doc """
-  Set a motor control
-  """
-  @spec set_motor_control(any(), String.t(), atom(), number()) :: :ok
-  def set_motor_control(robot_name, device_id, control, value) do
-    Playground.set_motor_control(
-      name: robot_name,
-      device_id: device_id,
-      control: control,
-      value: value
-    )
+    Playground.sense(name: robot_name, sensor_id: device_id, sense: sense)
   end
 
   @doc """
   Actuate a robot's motor
   """
-  @spec actuate(String.t()) :: :ok
-  def actuate(robot_name) do
-    Playground.actuate(name: robot_name)
+  @spec actuate(String.t(), String.t(), atom()) :: :ok
+  def actuate(robot_name, device_id, action) do
+    Playground.actuate(name: robot_name, device_id: device_id, action: action)
+  end
+
+  def execute_actions(robot_name) do
+    Playground.execute_actions(name: robot_name)
   end
 
   @doc """

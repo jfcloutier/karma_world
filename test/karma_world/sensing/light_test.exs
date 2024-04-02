@@ -45,7 +45,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
       Playground.add_device(robot.name, sensor_data)
 
       assert {:ok, ^default_color} =
-               Playground.read(name: :andy, sensor_id: "light-in2", sense: :color)
+               Playground.sense(name: :andy, sensor_id: "light-in2", sense: :color)
     end
 
     test "seeing food", %{sensor_data: sensor_data} do
@@ -58,7 +58,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
         })
 
       Playground.add_device(robot.name, sensor_data)
-      assert {:ok, :blue} = Playground.read(name: :andy, sensor_id: "light-in2", sense: :color)
+      assert {:ok, :blue} = Playground.sense(name: :andy, sensor_id: "light-in2", sense: :color)
     end
   end
 
@@ -79,7 +79,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
       sensed_ambient = default_ambient * 10
 
       assert {:ok, ^sensed_ambient} =
-               Playground.read(name: :andy, sensor_id: "light-in2", sense: :ambient)
+               Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
     end
 
     test "See the darknesst", %{sensor_data: sensor_data} do
@@ -93,7 +93,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
       Playground.add_device(robot.name, sensor_data)
 
-      assert {:ok, 10} = Playground.read(name: :andy, sensor_id: "light-in2", sense: :ambient)
+      assert {:ok, 10} = Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
     end
   end
 end

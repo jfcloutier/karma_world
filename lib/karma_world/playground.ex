@@ -60,25 +60,25 @@ defmodule KarmaWorld.Playground do
       GenServer.cast(__MODULE__, {:add_device, robot_name: robot_name, device_data: device_data})
 
   @doc """
-  Set a motor control
-  """
-  @spec set_motor_control(keyword()) :: :ok
-  def set_motor_control(name: robot_name, device_id: device_id, control: control, value: value),
-    do: GenServer.call(__MODULE__, {:set_motor_control, robot_name, device_id, control, value})
-
-  @doc """
-  Run the motors
+  Add an action to the pending actions
   """
   @spec actuate(keyword()) :: :ok
-  def actuate(name: robot_name),
-    do: GenServer.call(__MODULE__, {:actuate, robot_name})
+  def actuate(name: robot_name, device_id: motor_id, action: action),
+    do: GenServer.call(__MODULE__, {:actuate, robot_name, motor_id, action})
+
+  @doc """
+  Execute pending actions
+  """
+  @spec execute_actions(keyword()) :: :ok
+  def execute_actions(name: robot_name),
+    do: GenServer.call(__MODULE__, {:execute_actions, robot_name})
 
   @doc """
   Read a sensor
   """
-  @spec read(keyword()) :: any()
-  def read(name: robot_name, sensor_id: sensor_id, sense: sense),
-    do: GenServer.call(__MODULE__, {:read, robot_name, sensor_id, sense})
+  @spec sense(keyword()) :: any()
+  def sense(name: robot_name, sensor_id: sensor_id, sense: sense),
+    do: GenServer.call(__MODULE__, {:sense, robot_name, sensor_id, sense})
 
   # Test support
   @doc false
@@ -167,13 +167,14 @@ defmodule KarmaWorld.Playground do
 
   # A sensor is read for a sense. Allow concurrent reads.
   def handle_call(
-        {:read, robot_name, sensor_id, sense},
+        {:sense, robot_name, sensor_id, sense},
         from,
         %{robots: robots, tiles: tiles} = state
       ) do
     spawn_link(fn ->
       robot = Map.fetch!(robots, robot_name)
-      value = Robot.sense(robot, sensor_id, sense, tiles, Map.values(robots))
+      other_robots = Map.values(robots) -- [robot]
+      value = Robot.sense(robot, sensor_id, sense, tiles, other_robots)
 
       Logger.info(
         "[KarmaWorld] Playground - Sensed #{inspect(sense)} of #{robot_name}'s #{inspect(sensor_id)} as #{inspect(value)}"
@@ -192,52 +193,40 @@ defmodule KarmaWorld.Playground do
     {:noreply, state}
   end
 
-  # A motor control is set
-  def handle_call(
-        {:set_motor_control, robot_name, motor_id, control, value},
-        _from,
-        %{robots: robots, tiles: tiles} = state
-      ) do
-    Logger.info(
-      "[KarmaWorld] Playground - Set the #{control} of #{robot_name}'s motor #{motor_id} to #{inspect(value)}"
-    )
-
-    robot = Map.fetch!(robots, robot_name)
-    updated_robot = Robot.set_motor_control(robot, motor_id, control, value)
-
-    KarmaWorld.broadcast("robot_controlled", %{
-      robot: updated_robot,
-      motor_id: motor_id,
-      control: control,
-      value: value
-    })
-
-    {
-      :reply,
-      :ok,
-      %{state | tiles: tiles, robots: Map.put(robots, robot.name, updated_robot)}
-    }
-  end
-
   # Run a robot's motors
   def handle_call(
-        {:actuate, robot_name},
+        {:actuate, robot_name, motor_id, action},
         _from,
         %{robots: robots, tiles: tiles} = state
       ) do
     robot = Map.fetch!(robots, robot_name)
 
-    updated_robot =
-      Logger.info("[KarmaWorld] Playground - Actuate #{robot.name}")
+    Logger.info("[KarmaWorld] Playground - Actuate #{robot.name}")
 
     actuated_robot =
-      Robot.actuate(robot, tiles, Map.values(robots))
+      Robot.actuate(robot, motor_id, action, tiles, Map.values(robots))
 
     KarmaWorld.broadcast("robot_actuated", %{
-      robot: updated_robot
+      robot: actuated_robot,
+      motor_id: motor_id,
+      action: action
     })
 
     {:reply, :ok, %{state | robots: Map.put(robots, robot.name, actuated_robot)}}
+  end
+
+  def handle_call({:execute_actions, robot_name}, _from, %{robots: robots, tiles: tiles} = state) do
+    robot = Map.fetch!(robots, robot_name)
+
+    Logger.info("[KarmaWorld] Playground - Executing pending actions of #{robot.name}")
+    other_robots = Map.values(robots) -- [robot]
+    executed_robot = Robot.execute_actions(robot, tiles, other_robots)
+
+    KarmaWorld.broadcast("robot_actions_executed", %{
+      robot: executed_robot
+    })
+
+    {:reply, :ok, %{state | robots: Map.put(robots, robot.name, executed_robot)}}
   end
 
   ### TEST AND LIVE VIEW SUPPORT
