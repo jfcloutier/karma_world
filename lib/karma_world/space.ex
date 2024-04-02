@@ -83,8 +83,8 @@ defmodule KarmaWorld.Space do
   end
 
   @doc "File the tile adjoining another at a cartesian coordinate given an orientation"
-  @spec tile_adjoining_at_angle(integer, {float, float}, [%Tile{}]) ::
-          {:ok, %Tile{}} | {:error, atom}
+  @spec tile_adjoining_at_angle(integer, {float, float}, [Tile.t()]) ::
+          {:ok, Tile.t()} | {:error, atom}
   def tile_adjoining_at_angle(angle, {x, y}, tiles) do
     {:ok, %Tile{row: row, column: column}} = get_tile(tiles, {x, y})
     normalized_angle = normalize_orientation(angle)
