@@ -68,8 +68,8 @@ defmodule KarmaWorldWeb.WorldController do
         {channel, ""} = Integer.parse(channel_s)
         {:beacon_distance, channel}
 
-      ["proximity"] ->
-        :proximity
+      [sense_s] ->
+        String.to_atom(sense_s)
     end
   end
 
