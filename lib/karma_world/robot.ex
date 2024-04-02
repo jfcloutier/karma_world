@@ -120,6 +120,10 @@ defmodule KarmaWorld.Robot do
       |> aggregate_actions()
       |> run_motors(tiles, other_robots)
 
+    Logger.info(
+      "[KarmaWorld] Robot - #{robot.name} moved from {#{robot.x}, #{robot.y}}, orientation #{robot.orientation} to {#{updated_robot.x}, #{updated_robot.y}}, orientation #{updated_robot.orientation}"
+    )
+
     updated_robot
   end
 
@@ -130,7 +134,13 @@ defmodule KarmaWorld.Robot do
   Read a robot's sensor
   """
   @spec sense(t(), String.t(), atom(), [Tile.t()], [t()]) :: any()
-  def sense(%{sensors: sensors, motors: motors} = robot, device_id, raw_sense, tiles, other_robots) do
+  def sense(
+        %{sensors: sensors, motors: motors} = robot,
+        device_id,
+        raw_sense,
+        tiles,
+        other_robots
+      ) do
     case Map.get(sensors, device_id) || Map.get(motors, device_id) do
       nil ->
         Logger.warning(
@@ -242,10 +252,6 @@ defmodule KarmaWorld.Robot do
 
       new_orientation = Space.normalize_orientation(floor(position.orientation))
 
-      Logger.info(
-        "[KarmaWorld] Robot - #{robot.name} is now at {#{position.x}, #{position.y}} with orientation #{new_orientation}"
-      )
-
       %{robot | orientation: new_orientation, x: position.x, y: position.y}
       |> motors_run_completed()
     end
@@ -327,7 +333,7 @@ defmodule KarmaWorld.Robot do
 
       {:ok, tile} ->
         if Space.occupied?(tile, other_robots) do
-          IO.puts(
+          Logger.info(
             "[KarmaWorld] Robot - Can't move to new position #{inspect({new_x, new_y})}. Tile is occupied"
           )
 
