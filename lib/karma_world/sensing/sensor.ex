@@ -4,7 +4,7 @@ defmodule KarmaWorld.Sensing.Sensor do
   """
 
   alias KarmaWorld.Sensing.{Light, Infrared, Touch, Ultrasonic}
-  alias KarmaWorld.Actuating. Motor
+  alias KarmaWorld.Actuating.Motor
   alias KarmaWorld.{Robot, Space, Tile}
 
   @type position :: :left | :right | :top | :front | :back

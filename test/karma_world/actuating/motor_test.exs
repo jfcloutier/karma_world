@@ -16,7 +16,7 @@ defmodule KarmaWorld.Actuating.Motor.Test do
          %{
            device_id: "motor-outB",
            device_class: :motor,
-           device_type: :motor,
+           device_type: :tacho_motor,
            properties: %{rpm: 60, burst_secs: 0.1, position: :right, polarity: :normal}
          }
        ]
@@ -63,6 +63,8 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       assert robot(:andy).motors["motor-outB"].actions == [:spin]
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
+      motor_a_position_before = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_before = Map.get(robot(:andy).motors, "motor-outB").position
 
       Playground.execute_actions(name: :andy)
 
@@ -70,12 +72,18 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       assert Enum.empty?(robot(:andy).motors["motor-outB"].actions)
 
       {after_x, after_y} = robot(:andy) |> Robot.locate()
+      motor_a_position_after = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_after = Map.get(robot(:andy).motors, "motor-outB").position
 
       assert before_x == after_x
       assert after_y > before_y
+
+      assert Enum.all?(Map.values(robot(:andy).motors), &(&1.state == :holding))
+      assert motor_a_position_after > motor_a_position_before
+      assert motor_b_position_after > motor_b_position_before
     end
 
-    test "Move forward up with obstacle", %{motors_data: motors_data} do
+    test "Move forward up blocked by obstacle, then moved back", %{motors_data: motors_data} do
       {:ok, robot} =
         Playground.place_robot(%{
           name: :andy,
@@ -92,10 +100,98 @@ defmodule KarmaWorld.Actuating.Motor.Test do
       end
 
       {before_x, before_y} = robot(:andy) |> Robot.locate()
+      motor_a_position_before = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_before = Map.get(robot(:andy).motors, "motor-outB").position
+
       Playground.execute_actions(name: :andy)
+
       {after_x, after_y} = robot(:andy) |> Robot.locate()
+      motor_a_position_after = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_after = Map.get(robot(:andy).motors, "motor-outB").position
+
+      # moved up until obstacle hit
       assert before_x == after_x
-      assert floor(after_y) == floor(before_y)
+      assert before_y < after_y
+
+      # sensing
+      assert {:ok, motor_a_position_after} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :position)
+
+      assert {:ok, :stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :state)
+
+      assert {:ok, motor_b_position_after} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :position)
+
+      assert {:ok, :stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :state)
+
+      # moved until obstacle was hit
+      assert motor_a_position_after > motor_a_position_before
+      assert motor_b_position_after > motor_b_position_before
+      assert Enum.all?(Map.values(robot(:andy).motors), &(&1.state == :stalled))
+
+      # try moving forward again
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :spin)
+
+      Playground.execute_actions(name: :andy)
+
+      motor_a_position_stalled = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_stalled = Map.get(robot(:andy).motors, "motor-outB").position
+
+      {stalled_x, stalled_y} = robot(:andy) |> Robot.locate()
+
+      # Still stalled
+      assert Enum.all?(Map.values(robot(:andy).motors), &(&1.state == :stalled))
+      # Did not move
+      assert motor_a_position_after == motor_a_position_stalled
+      assert motor_b_position_after == motor_b_position_stalled
+
+      # sensing
+      assert {:ok, motor_a_position_stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :position)
+
+      assert {:ok, :stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :state)
+
+      assert {:ok, motor_b_position_stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :position)
+
+      assert {:ok, :stalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :state)
+
+      # try moving backward
+      Playground.actuate(name: :andy, device_id: "motor-outA", action: :reverse_spin)
+      Playground.actuate(name: :andy, device_id: "motor-outB", action: :reverse_spin)
+
+      Playground.execute_actions(name: :andy)
+
+      {unstalled_x, unstalled_y} = robot(:andy) |> Robot.locate()
+
+      motor_a_position_unstalled = Map.get(robot(:andy).motors, "motor-outA").position
+      motor_b_position_unstalled = Map.get(robot(:andy).motors, "motor-outB").position
+
+      # Unstalled
+      assert Enum.all?(Map.values(robot(:andy).motors), &(&1.state == :holding))
+      # Moved
+      assert unstalled_x == stalled_x
+      assert unstalled_y < stalled_y
+      assert motor_a_position_unstalled < motor_a_position_stalled
+      assert motor_b_position_unstalled < motor_b_position_stalled
+
+      # sensing
+      assert {:ok, motor_a_position_unstalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :position)
+
+      assert {:ok, :holding} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outA", sense: :state)
+
+      assert {:ok, motor_b_position_unstalled} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :position)
+
+      assert {:ok, :holding} ==
+               Playground.sense(name: :andy, sensor_id: "motor-outB", sense: :state)
     end
 
     test "Move forward down", %{motors_data: motors_data} do

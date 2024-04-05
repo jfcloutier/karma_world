@@ -20,8 +20,8 @@ defmodule KarmaWorld.Actuating.Motor do
           duration: integer(),
           # the sense-able cumulative rotations (positive or negative) taken by the motor until now
           position: integer(),
-          # the sense-able state the motor is currently in
-          state: :running | :ramping | :holding | :overloaded,
+          # the sense-able state the motor is currently in.Only :holding or :stalled for now are possible.
+          state: :running | :ramping | :holding | :overloaded | :stalled,
           actions: [action]
         }
 
@@ -59,24 +59,6 @@ defmodule KarmaWorld.Actuating.Motor do
     }
   end
 
-  # For testing - TODO - GET RID OF IT
-  # def from(%{
-  #       device_id: device_id,
-  #       device_class: :motor,
-  #       device_type: device_type,
-  #       direction: direction,
-  #       side: side,
-  #       controls: controls
-  #     }) do
-  #   %__MODULE__{
-  #     id: device_id,
-  #     type: device_type,
-  #     direction: direction,
-  #     side: side,
-  #     controls: Map.merge(default_controls(), controls)
-  #   }
-  # end
-
   def sense(
         _robot,
         motor,
@@ -86,9 +68,8 @@ defmodule KarmaWorld.Actuating.Motor do
         _robots
       ) do
     case sense do
-      # TODO
       :position -> motor.position
-      :state -> :holding
+      :state -> motor.state
     end
   end
 
@@ -121,9 +102,29 @@ defmodule KarmaWorld.Actuating.Motor do
     rps_speed * direction
   end
 
-  def run_completed(motor), do: %{motor | duration: 0, state: :holding}
+  def run_completed(motor), do: %{motor | duration: 0}
+
+  def update_position_and_state(motor, delta) do
+    motor
+    |> update_position(delta)
+    |> update_state(delta)
+  end
 
   ### Private
+
+  # position changes if any distance was covered
+  defp update_position(motor, {dx, dy}) do
+    distance = (dx ** 2 + dy ** 2) |> :math.pow(0.5) |> ceil()
+    delta_position = distance * motor.direction
+    %{motor | position: motor.position + delta_position}
+  end
+
+  defp update_state(motor, delta) do
+    state =
+      if delta == {0, 0} and motor.duration > 0, do: :stalled, else: :holding
+
+    %{motor | state: state}
+  end
 
   defp extract_controls(%{rpm: rpm} = properties) do
     extracted = %{speed_mode: :rps, speed: round(rpm / 60)}

@@ -227,19 +227,23 @@ defmodule KarmaWorld.Robot do
       tiles_per_rotation =
         Playground.defaults()[:tiles_per_motor_rotation]
 
-      position =
+      left_motors = Enum.filter(motors, &(&1.side == :left))
+      right_motors = Enum.filter(motors, &(&1.side == :right))
+
+      result =
         Enum.reduce(
           0..ticks,
-          %{orientation: robot.orientation, x: robot.x, y: robot.y},
+          [
+            left_motors: left_motors,
+            right_motors: right_motors,
+            move: %{orientation: robot.orientation, x: robot.x, y: robot.y}
+          ],
           fn tick, acc ->
             secs_elapsed = tick * tick_duration
-            running_motors = Enum.reject(motors, &(&1.duration < secs_elapsed))
-            left_motors = Enum.filter(running_motors, &(&1.side == :left))
-            right_motors = Enum.filter(running_motors, &(&1.side == :right))
+            # running_motors = Enum.reject(motors, &(&1.duration < secs_elapsed))
 
             activate_motors(
-              left_motors,
-              right_motors,
+              secs_elapsed,
               tick_duration,
               acc,
               degrees_per_rotation,
@@ -250,30 +254,44 @@ defmodule KarmaWorld.Robot do
           end
         )
 
-      new_orientation = Space.normalize_orientation(floor(position.orientation))
+      new_orientation = Space.normalize_orientation(floor(result[:move].orientation))
+      updated_motors = result[:left_motors] ++ result[:right_motors]
+      updated_motors_map = Enum.map(updated_motors, &{&1.id, &1}) |> Enum.into(%{})
 
-      %{robot | orientation: new_orientation, x: position.x, y: position.y}
+      %{
+        robot
+        | motors: updated_motors_map,
+          orientation: new_orientation,
+          x: result[:move].x,
+          y: result[:move].y
+      }
       |> motors_run_completed()
     end
   end
 
   # TODO - update position status and state status of motors
   defp activate_motors(
-         left_motors,
-         right_motors,
+         secs_elapsed,
          tick_duration,
-         %{orientation: orientation, x: x, y: y},
+         [
+           left_motors: left_motors,
+           right_motors: right_motors,
+           move: %{orientation: orientation, x: x, y: y}
+         ],
          degrees_per_rotation,
          tiles_per_rotation,
          tiles,
          other_robots
        ) do
+    running_left_motors = Enum.reject(left_motors, &(&1.duration < secs_elapsed))
+    running_right_motors = Enum.reject(right_motors, &(&1.duration < secs_elapsed))
+
     # negative if backward-moving rotations
     left_forward_rotations =
-      Enum.map(left_motors, &(Motor.rotations_per_sec(&1) * tick_duration)) |> max()
+      Enum.map(running_left_motors, &(Motor.rotations_per_sec(&1) * tick_duration)) |> max()
 
     right_forward_rotations =
-      Enum.map(right_motors, &(Motor.rotations_per_sec(&1) * tick_duration)) |> max()
+      Enum.map(running_right_motors, &(Motor.rotations_per_sec(&1) * tick_duration)) |> max()
 
     angle =
       new_orientation(
@@ -295,7 +313,17 @@ defmodule KarmaWorld.Robot do
         other_robots
       )
 
-    %{orientation: angle, x: new_x, y: new_y}
+    # update the active motors positions by how much {x,y} changed and each motor's direction
+    # set active motors state to : stalled if {x,y} did not change but duration  was not zero, else :holding
+    delta = {new_x - x, new_y - y}
+    updated_left_motors = Enum.map(left_motors, &Motor.update_position_and_state(&1, delta))
+    updated_right_motors = Enum.map(right_motors, &Motor.update_position_and_state(&1, delta))
+
+    [
+      left_motors: updated_left_motors,
+      right_motors: updated_right_motors,
+      move: %{orientation: angle, x: new_x, y: new_y}
+    ]
   end
 
   defp new_orientation(
