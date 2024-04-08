@@ -1,5 +1,6 @@
 defmodule KarmaWorldWeb.Router do
   use KarmaWorldWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -17,6 +18,7 @@ defmodule KarmaWorldWeb.Router do
   scope "/", KarmaWorldWeb do
     pipe_through :browser
 
+    live "/playground", PlaygroundLive
     get "/", PageController, :home
   end
 
