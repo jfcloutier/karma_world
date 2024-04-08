@@ -165,6 +165,10 @@ defmodule KarmaWorld.Robot do
     end
   end
 
+  def tooltip(robot) do
+    "#{robot.name} is at {#{Float.round(robot.x, 1)},#{Float.round(robot.y, 1)}} and turned #{inspect robot.orientation} degrees"
+  end
+
   # Private
 
   defp add_sensor(robot, device_data) do

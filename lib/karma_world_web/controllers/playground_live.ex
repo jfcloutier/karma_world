@@ -16,14 +16,14 @@ defmodule KarmaWorldWeb.PlaygroundLive do
 
   def render(assigns) do
     ~H"""
-    <div>
-      <% "text-orange-800 bg-orange-800 txt-blue-500 bg-blue-500 text-green-500 bg-green-500 text-gray-900 bg-gray-900 text-gray-800 bg-gray-800 text-gray-700 bg-gray-700 text-gray-600 bg-gray-600 textgray-400 bg-gray-400 text-gray-200 bg-gray-200text-gray-50 bg-gray-50" %>
-       <table class="table-fixed">
+    <div class="m-4">
+      <% "text-orange-900 bg-orange-900 text-orange-950 bg-orange-950 txt-blue-500 bg-blue-500 text-green-500 bg-green-500 text-gray-700 bg-gray-700 text-gray-600 bg-gray-600 text-gray-500 bg-gray-500 text-gray-400 bg-gray-400 textgray-300 bg-gray-300 text-gray-50 bg-gray-50" %>
+      <table class="table-fixed">
         <%= for row <- Enum.reverse(@tiles) do %>
           <tr>
             <%= for tile <- row do %>
               <% tile_class = tile_class(tile) %>
-              <td class={"#{tile_class} border-2 border-slate-200 w-10 h-10 text-center"}>
+              <td class={"#{tile_class} border-2 border-slate-200 w-14 h-14 max-w-14 max-h-14 text-center"}>
                 <%= HTML.raw(tile_content(tile)) %>
               </td>
             <% end %>
@@ -70,19 +70,51 @@ defmodule KarmaWorldWeb.PlaygroundLive do
   end
 
   defp tile_content(tile) do
-
     cond do
       tile.robot != nil ->
         # Use first letter of name, uppercased
-        String.at(tile.robot.name, 0) |> String.upcase()
+        first = String.at(tile.robot.name, 0) |> String.upcase()
+
+        rotation = tile.robot.orientation
+
+        png =
+          case first do
+            "A" ->
+              "andy.png"
+
+            "K" ->
+              "karla.png"
+
+            _other ->
+              "anon.png"
+          end
+
+        """
+        <div class="group relative w-max">
+           <img src=\"images/#{png}\" width=60% style=\"display: block;margin-left: auto; margin-right: auto; rotate: #{rotation}deg\"/>
+           <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-100">
+              #{Robot.tooltip(tile.robot)}
+          </span>
+        </div>
+        """
 
       tile.beacon_orientation != nil ->
-        case tile.beacon_orientation do
-          :north -> "&uarr;"
-          :east -> "&rarr;"
-          :south -> "&darr;"
-          :west -> "&larr;"
-        end
+        rotation =
+          case tile.beacon_orientation do
+            :north -> 0
+            :east -> 90
+            :south -> 180
+            :west -> -90
+          end
+
+        """
+        <div class="group relative w-max">
+          <img src=\"images/beam.png\" width=60% style=\"display: block;margin-left: auto; margin-right: auto; rotate: #{rotation}deg\"/>
+          <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-100">
+            Channel #{tile.beacon_channel}
+          </span>
+        </div>
+        """
 
       true ->
         ""
@@ -119,17 +151,16 @@ defmodule KarmaWorldWeb.PlaygroundLive do
 
   defp tile_color(tile) do
     cond do
-      tile.obstacle_height > 0 -> "orange-800"
+      tile.obstacle_height > 10 -> "orange-950"
+      tile.obstacle_height > 0 -> "orange-900"
       tile.ground_color == 2 -> "blue-500"
       tile.ground_color == 3 -> "green-500"
-      tile.ambient_light <= 10 -> "gray-900"
-      tile.ambient_light <= 20 -> "gray-800"
-      tile.ambient_light <= 40 -> "gray-700"
-      tile.ambient_light <= 60 -> "gray-600"
-      tile.ambient_light < 80 -> "gray-400"
-      tile.ambient_light < 90 -> "gray-200"
+      tile.ambient_light < 15 -> "gray-700"
+      tile.ambient_light < 30 -> "gray-600"
+      tile.ambient_light < 50 -> "gray-500"
+      tile.ambient_light < 70 -> "gray-400"
+      tile.ambient_light < 80 -> "gray-300"
       tile.ambient_light <= 100 -> "gray-50"
     end
   end
-
 end
