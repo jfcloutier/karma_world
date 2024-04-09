@@ -10,12 +10,23 @@ defmodule KarmaWorld.Space do
 
   @simulated_step 0.2
 
+  @occlusion_height 10
+
   @doc """
   Whether a tile is occupied
   """
   @spec occupied?(Tile.t(), [Robot.t()]) :: boolean()
   def occupied?(%Tile{row: row, column: column} = tile, robots) do
     Tile.has_obstacle?(tile) or
+      Enum.any?(robots, &Robot.occupies?(&1, row: row, column: column))
+  end
+
+  @doc """
+  Whether a tile is occluding sensing
+  """
+  @spec occluding?(Tile.t(), [Robot.t()]) :: boolean()
+  def occluding?(%Tile{row: row, column: column} = tile, robots) do
+    tile.obstacle_height > @occlusion_height or
       Enum.any?(robots, &Robot.occupies?(&1, row: row, column: column))
   end
 
@@ -100,19 +111,19 @@ defmodule KarmaWorld.Space do
     get_tile(tiles, row: new_row, column: new_column)
   end
 
-  @doc "Find the {x,y} of the closest point of obstruction to a coordinate"
-  @spec closest_obstructed([Tile.t()], Robot.t() | Tile.t() | coordinates, integer(), [
+  @doc "Find the {x,y} of the closest point of obstruction/occlusion to a coordinate"
+  @spec closest_occluded([Tile.t()], Robot.t() | Tile.t() | coordinates, integer(), [
           Robot.t()
         ]) :: {integer(), integer()}
-  def closest_obstructed(tiles, %Robot{x: x, y: y}, orientation, robots) do
-    closest_obstructed(tiles, {x, y}, orientation, robots)
+  def closest_occluded(tiles, %Robot{x: x, y: y}, orientation, robots) do
+    closest_occluded(tiles, {x, y}, orientation, robots)
   end
 
-  def closest_obstructed(tiles, %Tile{row: row, column: column}, orientation, robots) do
-    closest_obstructed(tiles, {column, row}, orientation, robots)
+  def closest_occluded(tiles, %Tile{row: row, column: column}, orientation, robots) do
+    closest_occluded(tiles, {column, row}, orientation, robots)
   end
 
-  def closest_obstructed(tiles, {x, y}, orientation, robots) when is_number(x) and is_number(y) do
+  def closest_occluded(tiles, {x, y}, orientation, robots) when is_number(x) and is_number(y) do
     # look fifth of a tile further
     step = @simulated_step
     delta_y = :math.cos(d2r(orientation)) * step
@@ -124,10 +135,10 @@ defmodule KarmaWorld.Space do
     if floor(new_x) != floor(x) or floor(new_y) != floor(y) do
       case get_tile(tiles, {new_x, new_y}) do
         {:ok, tile} ->
-          if occupied?(tile, robots) do
+          if occluding?(tile, robots) do
             {floor(new_x), floor(new_y)}
           else
-            closest_obstructed(tiles, {new_x, new_y}, orientation, robots)
+            closest_occluded(tiles, {new_x, new_y}, orientation, robots)
           end
 
         {:error, _reason} ->
@@ -135,7 +146,7 @@ defmodule KarmaWorld.Space do
           {floor(x), floor(y)}
       end
     else
-      closest_obstructed(tiles, {new_x, new_y}, orientation, robots)
+      closest_occluded(tiles, {new_x, new_y}, orientation, robots)
     end
   end
 

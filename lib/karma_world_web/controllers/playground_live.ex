@@ -92,7 +92,7 @@ defmodule KarmaWorldWeb.PlaygroundLive do
         """
         <div class="group relative w-max">
            <img src=\"images/#{png}\" width=60% style=\"display: block;margin-left: auto; margin-right: auto; rotate: #{rotation}deg\"/>
-           <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-100">
+           <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-80">
               #{Robot.tooltip(tile.robot)}
           </span>
         </div>
@@ -110,7 +110,7 @@ defmodule KarmaWorldWeb.PlaygroundLive do
         """
         <div class="group relative w-max">
           <img src=\"images/beam.png\" width=60% style=\"display: block;margin-left: auto; margin-right: auto; rotate: #{rotation}deg\"/>
-          <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-100">
+          <span class="rounded-md bg-gray-200 border-2 border-gray-700 p-2 pointer-events-none absolute -top-12 left-0 w-max opacity-0 transition-opacity group-hover:opacity-80">
             Channel #{tile.beacon_channel}
           </span>
         </div>

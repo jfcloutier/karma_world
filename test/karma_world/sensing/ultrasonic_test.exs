@@ -77,7 +77,7 @@ defmodule KarmaWorld.Sensing.Ultrasonic.Test do
           orientation: 90
         })
 
-      assert {:ok, 115} =
+      assert {:ok, 143} =
                Playground.sense(name: :andy, sensor_id: "ultrasonic-in4", sense: :distance)
 
       Playground.move_robot(name: :karl, row: 9, column: 9)
