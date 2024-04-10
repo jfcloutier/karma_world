@@ -17,8 +17,8 @@ defmodule KarmaWorldWeb.PlaygroundLive do
   def render(assigns) do
     ~H"""
     <div class="m-4">
-      <% "text-orange-900 bg-orange-900 text-orange-950 bg-orange-950 txt-blue-500 bg-blue-500 text-green-500 bg-green-500 text-gray-700 bg-gray-700 text-gray-600 bg-gray-600 text-gray-500 bg-gray-500 text-gray-400 bg-gray-400 textgray-300 bg-gray-300 text-gray-50 bg-gray-50" %>
-      <table class="table-fixed">
+      <% "border-orange-950 bg-orange-900 bg-orange-950 bg-blue-500 bg-green-500 bg-gray-700 bg-gray-600 bg-gray-500 bg-gray-400 bg-gray-300 bg-gray-50" %>
+      <table class="table-fixed border-4 border-orange-950">
         <%= for row <- Enum.reverse(@tiles) do %>
           <tr>
             <%= for tile <- row do %>
@@ -50,22 +50,8 @@ defmodule KarmaWorldWeb.PlaygroundLive do
   defp tile_class(tile) do
     color = tile_color(tile)
 
-    text_color =
-      cond do
-        tile.robot != nil ->
-          if tile.ambient_light <= 60,
-            do: "font-bold text-gray-50",
-            else: "font-bold text-gray-900"
-
-        tile.beacon_orientation != nil ->
-          "font-bold text-gray-900"
-
-        true ->
-          "text-#{color}"
-      end
-
     bg_color = "bg-#{color}"
-    tile_class = text_color <> " " <> bg_color
+    tile_class = bg_color
     tile_class
   end
 

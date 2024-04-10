@@ -16,7 +16,7 @@ defmodule KarmaWorld.Space.Test do
   end
 
   describe "Spatial awareness" do
-    test "Closest obstructed", %{tiles: tiles} do
+    test "Closest occluded", %{tiles: tiles} do
       {:ok, robot} =
         Playground.place_robot(%{
           name: :andy,
@@ -25,36 +25,17 @@ defmodule KarmaWorld.Space.Test do
           orientation: 90
         })
 
+      # {column, row}
       assert {19, 5} == Space.closest_occluded(tiles, robot, 90, Playground.robots())
 
       {:ok, robot} = Playground.move_robot(name: :andy, row: 2, column: 9)
 
       assert {9, 19} == Space.closest_occluded(tiles, robot, 0, Playground.robots())
-
-      {x, y} = Space.closest_occluded(tiles, robot, 45, Playground.robots())
-      # Logger.info("Closest at 45 degrees is #{inspect({x, y})}")
-      assert x > 9
-      assert y > 2
-
-      {x, y} = Space.closest_occluded(tiles, robot, 180, Playground.robots())
-      # Logger.info("Closest at 180 degrees is #{inspect({x, y})}")
-      assert x == 9
-      assert y < 2
-
-      {x, y} = Space.closest_occluded(tiles, robot, 270, Playground.robots())
-      # Logger.info("Closest at 270 degrees is #{inspect({x, y})}")
-      assert x < 9
-      assert y == 2
-
-      {x, y} = Space.closest_occluded(tiles, robot, -90, Playground.robots())
-      # Logger.info("Closest at 270 degrees is #{inspect({x, y})}")
-      assert x < 9
-      assert y == 2
-
-      {x, y} = Space.closest_occluded(tiles, robot, -45, Playground.robots())
-      # Logger.info("Closest at -45 degrees is #{inspect({x, y})}")
-      assert x < 9
-      assert y > 2
+      assert {14, 7} == Space.closest_occluded(tiles, robot, 45, Playground.robots())
+      assert {9, 0} == Space.closest_occluded(tiles, robot, 180, Playground.robots())
+      assert {0, 2} == Space.closest_occluded(tiles, robot, 270, Playground.robots())
+      assert {0, 2} == Space.closest_occluded(tiles, robot, -90, Playground.robots())
+      assert {2, 9} == Space.closest_occluded(tiles, robot, -45, Playground.robots())
     end
 
     test "Adjoining tile", %{tiles: tiles} do
