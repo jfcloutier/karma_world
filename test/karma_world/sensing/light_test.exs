@@ -86,8 +86,8 @@ defmodule KarmaWorld.Sensing.Light.Test do
       {:ok, robot} =
         Playground.place_robot(%{
           name: :andy,
-          row: 10,
-          column: 18,
+          row: 6,
+          column: 3,
           orientation: 0
         })
 
