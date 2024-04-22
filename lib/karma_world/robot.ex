@@ -96,7 +96,7 @@ defmodule KarmaWorld.Robot do
   """
   @spec changed_by?(atom(), atom()) :: boolean()
   def changed_by?(:motor, :run_for), do: true
-  def changed_by?(_actuator_type, _command), do: false
+  def changed_by?(_effector_type, _command), do: false
 
   @doc """
   Actuate a robot's motor
