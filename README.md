@@ -59,27 +59,31 @@ Start Karma World in a terminal
 > iex -S mix phx.server
 ```
 
-Move the robot about from yet another terminal by copy and pasting any of these blocks of commands
+Point a browser to `http://localhost:4001/playground`
+
+![Playground](robot_on_patch.png "Robot on the food patch")
+
+From yet another terminal, move the robot "manually" by copy and pasting any of these blocks of commands
 
 ```shell
 # FORWARD
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outA/spin
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outB/spin
-wget -q -O - http://127.0.0.1:4000/api/execute_actions
+wget -q -O -  http://127.0.0.1:4000/api/execute_actions
 
 # RIGHT
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outA/spin
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outB/reverse_spin
-wget -q -O - http://127.0.0.1:4000/api/execute_actions
+wget -q -O -  http://127.0.0.1:4000/api/execute_actions
 
 # LEFT
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outA/reverse_spin
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outB/spin
-wget -q -O - http://127.0.0.1:4000/api/execute_actions
+wget -q -O -  http://127.0.0.1:4000/api/execute_actions
 
 # BACKWARD
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outA/reverse_spin
 wget -q -O -  http://127.0.0.1:4000/api/actuate/tacho_motor-outB/reverse_spin
-wget -q -O - http://127.0.0.1:4000/api/execute_actions
+wget -q -O -  http://127.0.0.1:4000/api/execute_actions
 
 ```
