@@ -35,7 +35,7 @@ defmodule KarmaWorld.Tile do
   def from_data(
         row,
         column,
-        [height_s, beacon_s, color_s, ambient_s],
+        [height_s, beacon_s],
         default_ambient: default_ambient,
         default_color: default_color
       ) do
@@ -47,10 +47,16 @@ defmodule KarmaWorld.Tile do
       obstacle_height: convert_height(height_s),
       beacon_channel: channel,
       beacon_orientation: orientation,
-      ground_color: convert_color(color_s, default_color),
-      ambient_light: convert_ambient(ambient_s, default_ambient)
+      ground_color: default_color,
+      ambient_light: default_ambient
     }
   end
+
+  @doc """
+  Do two tiles have the same coordinates?
+  """
+  @spec same_coordinates?(t(), t()) :: boolean()
+  def same_coordinates?(tile, other), do: {tile.row, tile.column} == {other.row, other.column}
 
   @doc """
   Is there an obstacle on the tile?
@@ -111,19 +117,5 @@ defmodule KarmaWorld.Tile do
       "e" -> {2, :east}
       "w" -> {2, :west}
     end
-  end
-
-  defp convert_color("_", default_color), do: default_color
-
-  defp convert_color(color_s, _default_color) do
-    {color, ""} = Integer.parse(color_s)
-    color
-  end
-
-  defp convert_ambient("_", default_ambient), do: default_ambient * 10
-
-  defp convert_ambient(ambient_s, _default_ambient) do
-    {ambient, ""} = Integer.parse(ambient_s)
-    ambient * 10
   end
 end

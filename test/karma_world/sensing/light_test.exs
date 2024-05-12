@@ -7,6 +7,7 @@ defmodule KarmaWorld.Sensing.Light.Test do
   require Logger
 
   setup_all do
+    :ok = Playground.make_food(row: 15, column: 9, food_duration: 2)
     tiles = Playground.tiles()
     default_color = Playground.defaults()[:default_color]
     default_ambient = Playground.defaults()[:default_ambient]
@@ -58,13 +59,13 @@ defmodule KarmaWorld.Sensing.Light.Test do
         })
 
       Playground.add_device(robot.name, sensor_data)
-      assert {:ok, :blue} = Playground.sense(name: :andy, sensor_id: "light-in2", sense: :color)
+      assert {:ok, :green} = Playground.sense(name: :andy, sensor_id: "light-in2", sense: :color)
     end
   end
 
-  describe "Seeing ambient light" do
+  describe "Seeing ambient light because close to food" do
     test "See default ambient light", %{
-      tile_defaults: %{ambient: default_ambient},
+      tile_defaults: tile_defaults,
       sensor_data: sensor_data
     } do
       {:ok, robot} =
@@ -76,13 +77,14 @@ defmodule KarmaWorld.Sensing.Light.Test do
         })
 
       Playground.add_device(robot.name, sensor_data)
-      sensed_ambient = default_ambient * 10
 
-      assert {:ok, ^sensed_ambient} =
-               Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
+      {:ok, sensed_ambient} =
+        Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
+
+      assert sensed_ambient > tile_defaults[:ambient]
     end
 
-    test "See the darknesst", %{sensor_data: sensor_data} do
+    test "Very far from the food", %{sensor_data: sensor_data, tile_defaults: tile_defaults} do
       {:ok, robot} =
         Playground.place_robot(%{
           name: :andy,
@@ -93,7 +95,10 @@ defmodule KarmaWorld.Sensing.Light.Test do
 
       Playground.add_device(robot.name, sensor_data)
 
-      assert {:ok, 10} = Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
+      {:ok, sensed_ambient} =
+        Playground.sense(name: :andy, sensor_id: "light-in2", sense: :ambient)
+
+      assert sensed_ambient == tile_defaults[:ambient]
     end
   end
 end

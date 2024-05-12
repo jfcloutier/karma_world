@@ -166,7 +166,7 @@ defmodule KarmaWorld.Robot do
   end
 
   def tooltip(robot) do
-    "#{robot.name} is at {#{Float.round(robot.x, 1)},#{Float.round(robot.y, 1)}} and turned #{inspect robot.orientation} degrees"
+    "#{robot.name} is at {#{Float.round(robot.x, 1)},#{Float.round(robot.y, 1)}} and turned #{inspect(robot.orientation)} degrees"
   end
 
   # Private

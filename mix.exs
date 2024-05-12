@@ -73,7 +73,6 @@ defmodule KarmaWorld.MixProject do
       "assets.deploy": [
         "tailwind karma_world --minify",
         "esbuild karma_world --minify",
-
         "phx.digest"
       ]
     ]

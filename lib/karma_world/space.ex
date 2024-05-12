@@ -235,6 +235,27 @@ defmodule KarmaWorld.Space do
   end
 
   @doc """
+  Distance in cm between two tiles
+  """
+  @spec distance_to_other_tile(Tile.t(), Tile.t()) :: float()
+  def distance_to_other_tile(tile, other) do
+    {tile_x, tile_y} = Tile.location(tile)
+    {other_x, other_y} = Tile.location(other)
+
+    delta_y_squared =
+      (other_y - tile_y)
+      |> :math.pow(2)
+
+    delta_x_squared =
+      (other_x - tile_x)
+      |> :math.pow(2)
+
+    distance = :math.sqrt(delta_y_squared + delta_x_squared)
+    distance_cm = distance * Playground.defaults()[:tile_side_cm]
+    distance_cm
+  end
+
+  @doc """
   How many row of tiles are there
   """
   @spec row_range([Tile.t()]) :: Range.t()
